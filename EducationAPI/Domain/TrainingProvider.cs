@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EducationAPI.Models;
+namespace EducationAPI.Domain;
 
 public partial class TrainingProvider
 {
-    public string Id { get; set; } 
+    public int ProviderIntId { get; set; }
 
     public string? NameEn { get; set; }
 
@@ -25,8 +25,7 @@ public partial class TrainingProvider
 
     public decimal? NumberOfTracks { get; set; }
 
-    public decimal Active { get; set; }
+    public bool Active { get; set; }
 
     public virtual ICollection<AuditingSession> AuditingSessions { get; set; } = new List<AuditingSession>();
-    public virtual ICollection<ProviderCenter> ProviderCenters { get; set; }
 }

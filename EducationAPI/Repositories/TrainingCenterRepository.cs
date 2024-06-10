@@ -1,5 +1,5 @@
 ﻿using EducationAPI.Context;
-using EducationAPI.Models;
+using EducationAPI.Domain;
 using System.Collections.Generic;
 
 namespace EducationAPI.Repositories

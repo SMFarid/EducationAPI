@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EducationAPI.Models;
+namespace EducationAPI.Domain;
 
 public partial class ProviderStudyGroup
 {
-    public int ProviderId { get; set; }
+    public int? ProviderId { get; set; }
 
-    public string? StudyGroupId { get; set; }
+    public int? StudyGroupIntId { get; set; }
 
     public string? Remarks { get; set; }
 
@@ -15,5 +15,5 @@ public partial class ProviderStudyGroup
 
     public virtual TrainingProvider? Provider { get; set; }
 
-    public virtual StudyGroup? StudyGroup { get; set; }
+    public virtual StudyGroup? StudyGroupInt { get; set; }
 }

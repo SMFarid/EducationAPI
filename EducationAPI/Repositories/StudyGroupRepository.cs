@@ -1,5 +1,5 @@
 ﻿using EducationAPI.Context;
-using EducationAPI.Models;
+using EducationAPI.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace EducationAPI.Repositories
@@ -15,8 +15,8 @@ namespace EducationAPI.Repositories
         {
             var result = await _context.StudyGroups.Where(c => c.RoundCode == ID)
                 .Include(c => c.Instructor)
-                .Include(c => c.Students)
-                .Include(c => c.Track)
+                .Include(c => c.Trainees)
+                .Include(c => c.TrackIntNavigation)
                 .FirstOrDefaultAsync();
             //var result = await _context.StudyGroups.ToListAsync();
             //return result.First();

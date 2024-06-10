@@ -1,33 +1,40 @@
-﻿using System;
+﻿using EducationAPI.Domain;
+using System;
 using System.Collections.Generic;
 
-namespace EducationAPI.Models;
+namespace EducationAPI;
 
 public partial class AuditingSession
 {
-    public int SessionId { get; set; } 
+    public int SessionId { get; set; }
 
-    public int AuditorId { get; set; } 
+    public int AuditorId { get; set; }
 
     public string? AuditorName { get; set; }
 
-    public DateTime SessionDateTime { get; set; }
+    public DateTime SessionDateTimeStart { get; set; }
 
-    public int CourseId { get; set; }
+    public DateTime? SessionDateTimeClose { get; set; }
+
+    public string? CourseId { get; set; }
 
     public string? CourseName { get; set; }
 
-    public string? ProviderId { get; set; }
+    public int? ProviderId { get; set; }
 
     public string? ProviderName { get; set; }
 
-    public int InstructorId { get; set; }
+    public int? InstructorId { get; set; }
 
     public string? InstructorName { get; set; }
 
-    public string StudyGroupId { get; set; } 
+    public string StudyGroupId { get; set; } = null!;
 
     public string? SessionType { get; set; }
+
+    public string? AttendanceType { get; set; }
+
+    public string? LabTestFlag { get; set; }
 
     public TimeOnly? StartTime { get; set; }
 
@@ -37,21 +44,19 @@ public partial class AuditingSession
 
     public decimal? NumberAttended { get; set; }
 
-    public string? CenterId { get; set; }
+    public int? CenterId { get; set; }
 
     public string? CenterName { get; set; }
 
-    public string? AttendanceType { get; set; }
-
-    public decimal? Conducted { get; set; }
+    public bool? Conducted { get; set; }
 
     public string? CurrentChapter { get; set; }
 
     public decimal? CoursePlanWeekNumber { get; set; }
 
-    public decimal? MaterialDelivered { get; set; }
+    public bool? MaterialDelivered { get; set; }
 
-    public decimal? FilesDelivered { get; set; }
+    public bool? FilesDelivered { get; set; }
 
     public string? PrevSessionLink { get; set; }
 
@@ -63,15 +68,11 @@ public partial class AuditingSession
 
     public byte[]? AttendanceEvidence { get; set; }
 
-    public virtual Auditor Auditor { get; set; } 
+    public virtual Auditor Auditor { get; set; } = null!;
 
     public virtual TrainingCenter? Center { get; set; }
-
-    public virtual Course? Course { get; set; }
 
     public virtual Instructor? Instructor { get; set; }
 
     public virtual TrainingProvider? Provider { get; set; }
-
-    public virtual StudyGroup StudyGroup { get; set; } 
 }

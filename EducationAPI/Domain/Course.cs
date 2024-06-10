@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EducationAPI.Models;
+namespace EducationAPI.Domain;
 
 public partial class Course
 {
-    public int CourseId { get; set; } 
+    public int CourseIntId { get; set; }
 
-    public int IntId { get; set; }
-
-    public string TrackId { get; set; } 
+    public string CourseCode { get; set; } = null!;
 
     public string? NameEn { get; set; }
 
     public string? NameAr { get; set; }
-
-    public string? TrackName { get; set; }
 
     public decimal? NumberOfSessions { get; set; }
 
@@ -23,19 +19,13 @@ public partial class Course
 
     public decimal? NumberOfExams { get; set; }
 
-    public decimal? Certification { get; set; }
+    public bool? Certification { get; set; }
 
-    public string? InstructorName { get; set; }
+    public bool Active { get; set; }
 
-    public string? InstructorId { get; set; }
+    public virtual ICollection<CourseInstanceHdr> CourseInstanceHdrs { get; set; } = new List<CourseInstanceHdr>();
 
-    public decimal? Capacity { get; set; }
+    public virtual ICollection<GroupSession> GroupSessions { get; set; } = new List<GroupSession>();
 
-    public decimal? OnlineOfflineFlag { get; set; }
-
-    public decimal? NumberOfStudyGroups { get; set; }
-
-    public decimal Active { get; set; }
-
-    public virtual ICollection<AuditingSession> AuditingSessions { get; set; } = new List<AuditingSession>();
+    public virtual ICollection<JobProfileCourseHdr> JobProfileCourseHdrs { get; set; } = new List<JobProfileCourseHdr>();
 }
