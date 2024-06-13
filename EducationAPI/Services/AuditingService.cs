@@ -1,9 +1,14 @@
 ﻿using EducationAPI.Common;
 using EducationAPI.Context;
+using EducationAPI.Domain;
 using EducationAPI.DTO;
+using EducationAPI.Models;
 using EducationAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace EducationAPI.Services
 {
@@ -29,15 +34,15 @@ namespace EducationAPI.Services
                     return response;
                 }
 
-                var students = studyGroup.Trainees.ToList();
+                //var students = studyGroup.Trainees != null ? studyGroup.Trainees.ToList(): new List<Trainee>();
 
-                criteria.students = students.Select(c => new StudentDTO { Id = c.TraineeIntId, NameAr = c.NameAr, NameEN = c.NameEn, }).ToList();
+                //criteria.students = students.Select(c => new StudentDTO { Id = c.TraineeIntId, NameAr = c.NameAr, NameEN = c.NameEn }).ToList();
 
-                criteria.CourseName = "";
-                criteria.TrainingCenterName = studyGroup.trainingProvider.NameEn;
-                criteria.instructor = studyGroup.Instructor != null ? studyGroup.Instructor.InstructorIntId.ToString() :"";
-                criteria.SessionType = "Online";
-                criteria.NumberRegistered = (int)studyGroup.NumberOfStudents;
+                //criteria.CourseName = "";
+                ////criteria.TrainingCenterName = studyGroup.trainingProvider.NameEn;
+                //criteria.instructor = studyGroup.Instructor != null ? studyGroup.Instructor.InstructorIntId.ToString() :"";
+                //criteria.SessionType = "Online";
+                //criteria.NumberRegistered = (int)studyGroup.NumberOfStudents;
                 response.Data = criteria;
                 //var center = await _context.TrainingCenters.Where(c => c.Id == center_ID).FirstOrDefaultAsync();
                 //var providersCenters = await _context.ProviderCenters.Where(c => c.CenterId == center_ID).Select(c => c.ProviderId).ToListAsync();
@@ -105,18 +110,18 @@ namespace EducationAPI.Services
                 Auditor = auditor,
                 AuditorId = model.AuditorId,
                 AuditorName = auditor.NameEn,
-                CourseId = (int)studyGroup.CourseId,
+                
                 //Course = studyGroup.CourseId, //retrieve name later
                 Instructor = studyGroup.Instructor,
                 InstructorId = (int)studyGroup.InstructorId,
                 InstructorName = studyGroup.InstructorName,
                 Conducted = model.Conducted,
                 MaterialDelivered = model.MaterialDelivered,
-                FilesDelivered = model.FilesDelivered,
+                
                 ConnectionQuality = model.ConnectionQuality.ToString(),
                 VoiceQuality = model.VoiceQuality.ToString(),
                 VideoQuality = model.VideoQuality.ToString(),
-                RoundCode = studyGroup.RoundCode,
+                StudyGroupId = studyGroup.GroupIntId.ToString(),
                 
             };
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EducationAPI;
+namespace EducationAPI.Domain;
 
 public partial class TraineeGroupCourse
 {
@@ -23,7 +23,7 @@ public partial class TraineeGroupCourse
 
     public virtual CourseInstanceHdr? Course { get; set; }
 
-    public virtual StudyGroup GroupInt { get; set; } = null!;
+    //public virtual StudyGroup GroupInt { get; set; }
 
-    public virtual Trainee Trainee { get; set; } = null!;
+    public virtual Trainee Trainee { get; set; }
 }

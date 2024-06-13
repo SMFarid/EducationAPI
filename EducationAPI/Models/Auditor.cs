@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EducationAPI.Models;
+using System;
 using System.Collections.Generic;
 
 namespace EducationAPI;

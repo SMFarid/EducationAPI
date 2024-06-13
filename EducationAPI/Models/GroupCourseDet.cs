@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EducationAPI;
+namespace EducationAPI.Domain;
 
 public partial class GroupCourseDet
 {
@@ -15,5 +15,5 @@ public partial class GroupCourseDet
 
     public virtual Course? CourseInt { get; set; }
 
-    public virtual StudyGroup? GroupInt { get; set; }
+    //public virtual StudyGroup? GroupInt { get; set; }
 }

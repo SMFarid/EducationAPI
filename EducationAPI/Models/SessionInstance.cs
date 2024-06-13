@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EducationAPI;
+namespace EducationAPI.Domain;
 
 public partial class SessionInstance
 {
@@ -19,7 +19,7 @@ public partial class SessionInstance
 
     public virtual Course? Course { get; set; }
 
-    public virtual StudyGroup? GroupInt { get; set; }
+    //public virtual StudyGroup? GroupInt { get; set; }
 
     public virtual GroupSession Session { get; set; } = null!;
 }

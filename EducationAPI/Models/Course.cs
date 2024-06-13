@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EducationAPI;
+namespace EducationAPI.Domain;
 
 public partial class Course
 {

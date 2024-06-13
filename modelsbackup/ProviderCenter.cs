@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EducationAPI.Domain;
+namespace EducationAPI;
 
 public partial class ProviderCenter
 {

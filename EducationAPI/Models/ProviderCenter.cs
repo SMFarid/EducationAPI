@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EducationAPI;
+namespace EducationAPI.Domain;
 
 public partial class ProviderCenter
 {
@@ -17,7 +17,7 @@ public partial class ProviderCenter
 
     public DateTime? ActiveTo { get; set; }
 
-    public virtual TrainingCenter Center { get; set; } = null!;
+    public virtual TrainingCenter Center { get; set; }
 
-    public virtual TrainingProvider Provider { get; set; } = null!;
+    public virtual TrainingProvider Provider { get; set; }
 }

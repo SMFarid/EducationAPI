@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EducationAPI;
+namespace EducationAPI.Domain;
 
 public partial class StudyGroupDay
 {
@@ -27,5 +27,7 @@ public partial class StudyGroupDay
 
     public DateTime? ActiveTo { get; set; }
 
-    public virtual StudyGroup StudyGroup { get; set; } = null!;
+    public string RoundCode { get; set;}
+
+    //public virtual StudyGroup StudyGroup { get; set; };
 }

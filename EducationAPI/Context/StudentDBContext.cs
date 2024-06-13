@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using EducationAPI.Domain;
+using EducationAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EducationAPI.Context;
@@ -73,7 +74,7 @@ public partial class StudentDBContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=DESKTOP-GBPLSPS;Database=StudentDB;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;User ID=sherin;Password=P@ssw0rd");
+        => optionsBuilder.UseSqlServer("Server=DESKTOP-GBPLSPS;Database=DEPI;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;User ID=sherin;Password=P@ssw0rd");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -107,22 +108,22 @@ public partial class StudentDBContext : DbContext
             entity.Property(e => e.CourseName)
                 .HasMaxLength(50)
                 .HasColumnName("Course_Name");
-            entity.Property(e => e.CoursePlanWeekNumber)
-                .HasColumnType("numeric(18, 0)")
-                .HasColumnName("Course_Plan_Week_Number");
+            //entity.Property(e => e.CoursePlanWeekNumber)
+            //    .HasColumnType("numeric(18, 0)")
+            //    .HasColumnName("Course_Plan_Week_Number");
             entity.Property(e => e.CurrentChapter)
                 .HasMaxLength(50)
                 .HasColumnName("Current_Chapter");
             entity.Property(e => e.EndTime).HasColumnName("End_Time");
-            entity.Property(e => e.FilesDelivered).HasColumnName("Files_Delivered");
+            //entity.Property(e => e.FilesDelivered).HasColumnName("Files_Delivered");
             entity.Property(e => e.InstructorId).HasColumnName("Instructor_ID");
             entity.Property(e => e.InstructorName)
                 .HasMaxLength(100)
                 .HasColumnName("Instructor_Name");
-            entity.Property(e => e.LabTestFlag)
-                .HasMaxLength(1)
-                .IsUnicode(false)
-                .HasColumnName("Lab_Test_Flag");
+            //entity.Property(e => e.LabTestFlag)
+                //.HasMaxLength(1)
+                //.IsUnicode(false)
+                //.HasColumnName("Lab_Test_Flag");
             entity.Property(e => e.MaterialDelivered).HasColumnName("Material_Delivered");
             entity.Property(e => e.NumberAttended)
                 .HasColumnType("numeric(18, 0)")
@@ -169,9 +170,9 @@ public partial class StudentDBContext : DbContext
                 .HasForeignKey(d => d.InstructorId)
                 .HasConstraintName("FK_Auditing_Session_Instructor");
 
-            entity.HasOne(d => d.Provider).WithMany(p => p.AuditingSessions)
-                .HasForeignKey(d => d.ProviderId)
-                .HasConstraintName("FK_Auditing_Session_Training_Provider");
+            //entity.HasOne(d => d.Provider).WithMany(p => p.AuditingSessions)
+            //    .HasForeignKey(d => d.ProviderId)
+            //    .HasConstraintName("FK_Auditing_Session_Training_Provider");
         });
 
         modelBuilder.Entity<Auditor>(entity =>
@@ -388,9 +389,9 @@ public partial class StudentDBContext : DbContext
                 .HasForeignKey(d => d.CourseIntId)
                 .HasConstraintName("FK_Group_Course_Det_Course");
 
-            entity.HasOne(d => d.GroupInt).WithMany()
-                .HasForeignKey(d => d.GroupIntId)
-                .HasConstraintName("FK_Group_Course_Det_Study_Group");
+            //entity.HasOne(d => d.GroupInt).WithMany()
+            //    .HasForeignKey(d => d.GroupIntId)
+            //    .HasConstraintName("FK_Group_Course_Det_Study_Group");
         });
 
         modelBuilder.Entity<GroupSession>(entity =>
@@ -417,9 +418,9 @@ public partial class StudentDBContext : DbContext
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_Group_Session_Instructor");
 
-            entity.HasOne(d => d.StudyGroupInt).WithMany(p => p.GroupSessions)
-                .HasForeignKey(d => d.StudyGroupIntId)
-                .HasConstraintName("FK_Group_Session_Study_Group");
+            //entity.HasOne(d => d.StudyGroupInt).WithMany(p => p.GroupSessions)
+            //    .HasForeignKey(d => d.StudyGroupIntId)
+            //    .HasConstraintName("FK_Group_Session_Study_Group");
         });
 
         modelBuilder.Entity<GroupTrackDet>(entity =>
@@ -437,10 +438,10 @@ public partial class StudentDBContext : DbContext
                 .HasColumnName("Start_Date");
             entity.Property(e => e.TrackIntId).HasColumnName("Track_Int_ID");
 
-            entity.HasOne(d => d.GroupInt).WithMany()
-                .HasForeignKey(d => d.GroupIntId)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK_Group_Track_Det_Study_Group");
+            //entity.HasOne(d => d.GroupInt).WithMany()
+            //    .HasForeignKey(d => d.GroupIntId)
+            //    .OnDelete(DeleteBehavior.Cascade)
+            //    .HasConstraintName("FK_Group_Track_Det_Study_Group");
 
             entity.HasOne(d => d.TrackInt).WithMany()
                 .HasForeignKey(d => d.TrackIntId)
@@ -600,9 +601,9 @@ public partial class StudentDBContext : DbContext
                 .HasForeignKey(d => d.ProviderId)
                 .HasConstraintName("FK_Provider_Study_Group_Training_Provider");
 
-            entity.HasOne(d => d.StudyGroupInt).WithMany()
-                .HasForeignKey(d => d.StudyGroupIntId)
-                .HasConstraintName("FK_Provider_Study_Group_Study_Group");
+            //entity.HasOne(d => d.StudyGroupInt).WithMany()
+            //    .HasForeignKey(d => d.StudyGroupIntId)
+            //    .HasConstraintName("FK_Provider_Study_Group_Study_Group");
         });
 
         modelBuilder.Entity<SessionInstance>(entity =>
@@ -627,9 +628,9 @@ public partial class StudentDBContext : DbContext
                 .HasForeignKey(d => d.CourseId)
                 .HasConstraintName("FK_Session_Instance_Course");
 
-            entity.HasOne(d => d.GroupInt).WithMany()
-                .HasForeignKey(d => d.GroupIntId)
-                .HasConstraintName("FK_Session_Instance_Study_Group");
+            //entity.HasOne(d => d.GroupInt).WithMany()
+            //    .HasForeignKey(d => d.GroupIntId)
+            //    .HasConstraintName("FK_Session_Instance_Study_Group");
 
             entity.HasOne(d => d.Session).WithMany()
                 .HasForeignKey(d => d.SessionId)
@@ -714,6 +715,9 @@ public partial class StudentDBContext : DbContext
             entity.HasOne(d => d.TrackIntNavigation).WithMany(p => p.StudyGroups)
                 .HasForeignKey(d => d.TrackIntId)
                 .HasConstraintName("FK_Study_Group_Track1");
+            entity.HasMany(d => d.Trainees)
+            .WithOne(d => d.StudyGroup)
+            .HasForeignKey(d => d.GroupIntID);
         });
 
         modelBuilder.Entity<StudyGroupDay>(entity =>
@@ -751,10 +755,10 @@ public partial class StudentDBContext : DbContext
                 .HasColumnName("Softskill_Day");
             entity.Property(e => e.StudyGroupId).HasColumnName("Study_Group_ID");
 
-            entity.HasOne(d => d.StudyGroup).WithMany()
-                .HasForeignKey(d => d.StudyGroupId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Study_Group_Days_Study_Group");
+            //entity.HasOne(d => d.StudyGroup).WithMany()
+            //    .HasForeignKey(d => d.StudyGroupId)
+            //    .OnDelete(DeleteBehavior.ClientSetNull)
+            //    .HasConstraintName("FK_Study_Group_Days_Study_Group");
         });
 
         modelBuilder.Entity<StudyGroupSession>(entity =>
@@ -784,10 +788,10 @@ public partial class StudentDBContext : DbContext
                 .HasForeignKey(d => d.InstructorId)
                 .HasConstraintName("FK_Study_Group_Session_Instructor");
 
-            entity.HasOne(d => d.StudyGroup).WithMany(p => p.StudyGroupSessions)
-                .HasForeignKey(d => d.StudyGroupId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Study_Group_Session_Study_Group");
+            //entity.HasOne(d => d.StudyGroup).WithMany(p => p.StudyGroupSessions)
+            //    .HasForeignKey(d => d.StudyGroupId)
+            //    .OnDelete(DeleteBehavior.ClientSetNull)
+            //    .HasConstraintName("FK_Study_Group_Session_Study_Group");
         });
 
         modelBuilder.Entity<Track>(entity =>
@@ -883,6 +887,7 @@ public partial class StudentDBContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("Study_Governorate");
             entity.Property(e => e.TrackId).HasColumnName("Track_ID");
+            entity.Property(e => e.GroupIntID).HasColumnName("Group_Int_ID");
 
             entity.HasOne(d => d.Track).WithMany(p => p.Trainees)
                 .HasForeignKey(d => d.TrackId)
@@ -913,10 +918,10 @@ public partial class StudentDBContext : DbContext
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_Student_Group_Course_Course_Instance_Hdr");
 
-            entity.HasOne(d => d.GroupInt).WithMany()
-                .HasForeignKey(d => d.GroupIntId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Student_Group_Course_Study_Group");
+            //entity.HasOne(d => d.GroupInt).WithMany()
+            //    .HasForeignKey(d => d.GroupIntId)
+            //    .OnDelete(DeleteBehavior.ClientSetNull)
+            //    .HasConstraintName("FK_Student_Group_Course_Study_Group");
 
             entity.HasOne(d => d.Trainee).WithMany()
                 .HasForeignKey(d => d.TraineeId)

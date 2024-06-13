@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EducationAPI.Domain;
+namespace EducationAPI;
 
-public partial class TrainingCenter
+public partial class TrainingProvider
 {
-    public int CenterIntId { get; set; }
-
-    public string? CenterCode { get; set; }
+    public int ProviderIntId { get; set; }
 
     public string? NameEn { get; set; }
 
@@ -17,17 +15,17 @@ public partial class TrainingCenter
 
     public string? Area { get; set; }
 
+    public string? Address { get; set; }
+
     public string? Phone { get; set; }
 
     public string? Email { get; set; }
 
     public string? Website { get; set; }
 
-    public decimal? NumberOfLabs { get; set; }
+    public decimal? NumberOfTracks { get; set; }
 
-    public decimal? NumberOfClassrooms { get; set; }
-
-    public bool? Active { get; set; }
+    public bool Active { get; set; }
 
     public virtual ICollection<AuditingSession> AuditingSessions { get; set; } = new List<AuditingSession>();
 }

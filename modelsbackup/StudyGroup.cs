@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EducationAPI.Domain;
+namespace EducationAPI;
 
 public partial class StudyGroup
 {
@@ -60,6 +60,6 @@ public partial class StudyGroup
     public virtual TrackProvider? TrackInt { get; set; }
 
     public virtual Track? TrackIntNavigation { get; set; }
-    public virtual ICollection<Trainee>? Trainees { get;}
-    public virtual TrainingProvider trainingProvider { get; set; }
+
+    public virtual Track? TrackNavigation { get;}
 }

@@ -1,7 +1,8 @@
-﻿using System;
+﻿using EducationAPI.Domain;
+using System;
 using System.Collections.Generic;
 
-namespace EducationAPI;
+namespace EducationAPI.Models;
 
 public partial class AuditingSession
 {
@@ -33,7 +34,9 @@ public partial class AuditingSession
 
     public string? AttendanceType { get; set; }
 
-    public string? LabTestFlag { get; set; }
+    public bool? LabFlag { get; set; }
+
+    public bool? TestFlag { get; set; }
 
     public TimeOnly? StartTime { get; set; }
 
@@ -51,11 +54,9 @@ public partial class AuditingSession
 
     public string? CurrentChapter { get; set; }
 
-    public decimal? CoursePlanWeekNumber { get; set; }
+    public decimal? PlannedChapter { get; set; }
 
     public bool? MaterialDelivered { get; set; }
-
-    public bool? FilesDelivered { get; set; }
 
     public string? PrevSessionLink { get; set; }
 
@@ -66,6 +67,14 @@ public partial class AuditingSession
     public string? VideoQuality { get; set; }
 
     public byte[]? AttendanceEvidence { get; set; }
+
+    public string? InstructorResponsiveness { get; set; }
+
+    public bool? SessionLinkDelivered { get; set; }
+
+    public bool? DepiLogoAdded { get; set; }
+
+    public bool? PresentationUsed { get; set; }
 
     public virtual Auditor Auditor { get; set; } = null!;
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EducationAPI;
+namespace EducationAPI.Domain;
 
 public partial class Trainee
 {
@@ -17,7 +17,7 @@ public partial class Trainee
 
     public int? TrackId { get; set; }
 
-    public string? RoundCode { get; set; }
+    public string RoundCode { get; set; }
 
     public string? StudyGovernorate { get; set; }
 
@@ -42,8 +42,11 @@ public partial class Trainee
     public string? LinkedIn { get; set; }
 
     public string? Status { get; set; }
+    public int GroupIntID { get; set; }
 
     public bool Active { get; set; }
 
     public virtual Track? Track { get; set; }
+    
+    public virtual StudyGroup StudyGroup { get; set; }
 }

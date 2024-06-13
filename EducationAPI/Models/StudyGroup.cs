@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EducationAPI;
+namespace EducationAPI.Domain;
 
 public partial class StudyGroup
 {
-    public string RoundCode { get; set; } = null!;
+    public string RoundCode { get; set; }
 
     public int? TrackIntId { get; set; }
 
@@ -60,6 +60,6 @@ public partial class StudyGroup
     public virtual TrackProvider? TrackInt { get; set; }
 
     public virtual Track? TrackIntNavigation { get; set; }
-
-    public virtual Track? TrackNavigation { get;}
+    public List<Trainee>? Trainees { get; set; }
+    //public virtual TrainingProvider trainingProvider { get; set; }
 }

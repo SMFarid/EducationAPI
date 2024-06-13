@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EducationAPI;
+namespace EducationAPI.Domain;
 
 public partial class GroupTrackDet
 {
@@ -13,7 +13,7 @@ public partial class GroupTrackDet
 
     public DateTime? EndDate { get; set; }
 
-    public virtual StudyGroup? GroupInt { get; set; }
+    //public virtual StudyGroup? GroupInt { get; set; }
 
     public virtual Track? TrackInt { get; set; }
 }

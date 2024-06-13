@@ -1,7 +1,8 @@
-﻿using System;
+﻿using EducationAPI.Models;
+using System;
 using System.Collections.Generic;
 
-namespace EducationAPI;
+namespace EducationAPI.Domain;
 
 public partial class Instructor
 {

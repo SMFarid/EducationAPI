@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EducationAPI;
+namespace EducationAPI.Domain;
 
 public partial class GroupSession
 {
@@ -27,5 +27,5 @@ public partial class GroupSession
 
     public virtual Instructor? Instructor { get; set; }
 
-    public virtual StudyGroup? StudyGroupInt { get; set; }
+    //public virtual StudyGroup? StudyGroupInt { get; set; }
 }

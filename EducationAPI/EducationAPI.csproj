@@ -8,13 +8,13 @@
 
   <ItemGroup>
     <Compile Remove="Context_\**" />
-    <Compile Remove="Models\**" />
+    <Compile Remove="obj\**" />
     <Content Remove="Context_\**" />
-    <Content Remove="Models\**" />
+    <Content Remove="obj\**" />
     <EmbeddedResource Remove="Context_\**" />
-    <EmbeddedResource Remove="Models\**" />
+    <EmbeddedResource Remove="obj\**" />
     <None Remove="Context_\**" />
-    <None Remove="Models\**" />
+    <None Remove="obj\**" />
   </ItemGroup>
 
   <ItemGroup>
