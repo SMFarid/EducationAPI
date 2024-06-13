@@ -12,6 +12,8 @@ namespace EducationAPI.Services
 
         AuditorRoundCodeAssignmentRepository assignmentRepository = new AuditorRoundCodeAssignmentRepository();
         StudyGroupRepository studyGroupRepository = new StudyGroupRepository();
+        AuditorRepository auditorRepository = new AuditorRepository();
+        AuditingSessionRepository auditingSessionRepository = new AuditingSessionRepository();
 
         public async Task<CommonResponse<AuditingSessionCriteraDTO>> getAuditingCritera(string roundCode)
         {
@@ -76,6 +78,51 @@ namespace EducationAPI.Services
                 
             }
             response.Data = auditorGroups;
+            return response;
+        }
+
+        public async Task<CommonResponse<string>> SaveAuditSession (AuditSessionSaveModel model)
+        {
+            var response = new CommonResponse<string>();
+
+            var auditor = await auditorRepository.GetAuditorById(model.AuditorId);
+            if (auditor == null)
+            {
+                response.Errors.Add(new Error { Message = "Error: Auditor not found, please check ID" });
+                return response;
+            }
+            var studyGroup = await studyGroupRepository.getStudyGroupByID(model.RoundCode);
+            if (studyGroup == null)
+            {
+                response.Errors.Add(new Error { Message = "Error: Round Code not found" });
+                return response;
+            }
+            //get study group session
+
+            AuditingSession auditingSession = new AuditingSession
+            {
+                AttendanceType = "Online", //change later
+                Auditor = auditor,
+                AuditorId = model.AuditorId,
+                AuditorName = auditor.NameEn,
+                CourseId = (int)studyGroup.CourseId,
+                //Course = studyGroup.CourseId, //retrieve name later
+                Instructor = studyGroup.Instructor,
+                InstructorId = (int)studyGroup.InstructorId,
+                InstructorName = studyGroup.InstructorName,
+                Conducted = model.Conducted,
+                MaterialDelivered = model.MaterialDelivered,
+                FilesDelivered = model.FilesDelivered,
+                ConnectionQuality = model.ConnectionQuality.ToString(),
+                VoiceQuality = model.VoiceQuality.ToString(),
+                VideoQuality = model.VideoQuality.ToString(),
+                RoundCode = studyGroup.RoundCode,
+                
+            };
+
+            response.Data = await auditingSessionRepository.SaveSession(auditingSession);
+
+            //
             return response;
         }
 
