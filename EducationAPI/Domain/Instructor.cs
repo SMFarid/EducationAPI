@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EducationAPI.Models;
+namespace EducationAPI.Domain;
 
 public partial class Instructor
 {
-    public int Id { get; set; }
+    public int InstructorIntId { get; set; }
 
-    public string SocialId { get; set; } 
+    public string SocialId { get; set; } = null!;
 
-    public string NameEn { get; set; } 
+    public string NameEn { get; set; } = null!;
 
     public string? NameAr { get; set; }
 
-    public string Gender { get; set; } 
+    public string Gender { get; set; } = null!;
 
     public DateOnly Dob { get; set; }
 
@@ -25,7 +25,7 @@ public partial class Instructor
 
     public string? Email { get; set; }
 
-    public string Mobile { get; set; } 
+    public string Mobile { get; set; } = null!;
 
     public string? Phone { get; set; }
 
@@ -48,6 +48,8 @@ public partial class Instructor
     public decimal Active { get; set; }
 
     public virtual ICollection<AuditingSession> AuditingSessions { get; set; } = new List<AuditingSession>();
+
+    public virtual ICollection<GroupSession> GroupSessions { get; set; } = new List<GroupSession>();
 
     public virtual ICollection<StudyGroupSession> StudyGroupSessions { get; set; } = new List<StudyGroupSession>();
 

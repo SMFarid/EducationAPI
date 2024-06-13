@@ -1,6 +1,6 @@
-﻿using EducationAPI.Context;
+﻿using EducationAPI.Common;
+using EducationAPI.Context;
 using EducationAPI.DTO;
-using EducationAPI.Models;
 using EducationAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
@@ -29,13 +29,13 @@ namespace EducationAPI.Services
                     return response;
                 }
 
-                var students = studyGroup.Students.ToList();
+                var students = studyGroup.Trainees.ToList();
 
-                criteria.students = students.Select(c => new StudentDTO { Id = c.StudentIntId, NameAr = c.NameAr, NameEN = c.NameEn, }).ToList();
+                criteria.students = students.Select(c => new StudentDTO { Id = c.TraineeIntId, NameAr = c.NameAr, NameEN = c.NameEn, }).ToList();
 
                 criteria.CourseName = "";
-                criteria.TrainingCenterName = studyGroup.ProviderId;
-                criteria.instructor = studyGroup.Instructor != null ? studyGroup.Instructor.Id.ToString() :"";
+                criteria.TrainingCenterName = studyGroup.trainingProvider.NameEn;
+                criteria.instructor = studyGroup.Instructor != null ? studyGroup.Instructor.InstructorIntId.ToString() :"";
                 criteria.SessionType = "Online";
                 criteria.NumberRegistered = (int)studyGroup.NumberOfStudents;
                 response.Data = criteria;

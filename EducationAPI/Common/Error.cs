@@ -1,4 +1,4 @@
-﻿namespace EducationAPI.Models
+﻿namespace EducationAPI.Common
 {
     public class Error
     {

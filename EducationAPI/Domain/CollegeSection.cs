@@ -1,25 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EducationAPI.Models;
+namespace EducationAPI.Domain;
 
 public partial class CollegeSection
 {
-    public string Id { get; set; } 
+    public int Id { get; set; }
 
-    public string NameEn { get; set; } 
+    public string NameEn { get; set; } = null!;
 
     public string? NameAr { get; set; }
 
-    public string? IntId { get; set; }
+    public string? SectionCode { get; set; }
 
-    public decimal? Capacity { get; set; }
+    public int? Capacity { get; set; }
 
-    public string? CollegeId { get; set; }
+    public int? CollegeId { get; set; }
 
     public string? CollegeName { get; set; }
 
-    public decimal Active { get; set; }
+    public bool Active { get; set; }
 
     public virtual College? College { get; set; }
 }

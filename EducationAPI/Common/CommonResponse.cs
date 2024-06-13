@@ -1,6 +1,7 @@
 ﻿using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Collections.Generic;
-namespace EducationAPI.Models
+
+namespace EducationAPI.Common
 {
     public class CommonResponse<T>
     {

@@ -1,6 +1,6 @@
-﻿using EducationAPI.Context;
+﻿using EducationAPI.Common;
+using EducationAPI.Context;
 using EducationAPI.DTO;
-using EducationAPI.Models;
 using EducationAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

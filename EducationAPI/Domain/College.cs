@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EducationAPI.Models;
+namespace EducationAPI.Domain;
 
 public partial class College
 {
-    public string Id { get; set; } 
+    public int CollegeId { get; set; }
 
-    public string NameEn { get; set; } 
+    public string NameEn { get; set; } = null!;
 
     public string? NameAr { get; set; }
 
-    public string UniversityId { get; set; } 
+    public int UniversityId { get; set; }
 
-    public string? IntId { get; set; }
+    public string? CollegeCode { get; set; }
 
     public string? UniversityName { get; set; }
 
@@ -21,11 +21,11 @@ public partial class College
 
     public string? Area { get; set; }
 
-    public decimal? NumberOfSections { get; set; }
+    public int? NumberOfSections { get; set; }
 
-    public decimal Active { get; set; }
+    public bool Active { get; set; }
 
     public virtual ICollection<CollegeSection> CollegeSections { get; set; } = new List<CollegeSection>();
 
-    public virtual University University { get; set; } 
+    public virtual University University { get; set; } = null!;
 }
