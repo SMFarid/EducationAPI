@@ -18,7 +18,7 @@ builder.Services.AddDbContext<StudentDBContext>
              (options => options.UseSqlServer(builder.Configuration.GetConnectionString("DBConn"),
              b => b.MigrationsAssembly(typeof(StudentDBContext).Assembly.FullName)));
 
-builder.Services.AddAuthentication("BasicAuthentication").AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+//builder.Services.AddAuthentication("BasicAuthentication").AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
 var app = builder.Build();
 
