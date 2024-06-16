@@ -34,15 +34,15 @@ namespace EducationAPI.Services
                     return response;
                 }
 
-                //var students = studyGroup.Trainees != null ? studyGroup.Trainees.ToList(): new List<Trainee>();
+                var students = studyGroup.Trainees != null ? studyGroup.Trainees.ToList() : new List<Trainee>();
 
-                //criteria.students = students.Select(c => new StudentDTO { Id = c.TraineeIntId, NameAr = c.NameAr, NameEN = c.NameEn }).ToList();
+                criteria.students = students.Select(c => new StudentDTO { Id = c.TraineeIntId, NameAr = c.NameAr, NameEN = c.NameEn }).ToList();
 
-                //criteria.CourseName = "";
-                ////criteria.TrainingCenterName = studyGroup.trainingProvider.NameEn;
-                //criteria.instructor = studyGroup.Instructor != null ? studyGroup.Instructor.InstructorIntId.ToString() :"";
-                //criteria.SessionType = "Online";
-                //criteria.NumberRegistered = (int)studyGroup.NumberOfStudents;
+                criteria.CourseName = "";
+                //criteria.TrainingCenterName = studyGroup.trainingProvider.NameEn;
+                criteria.instructor = studyGroup.Instructor != null ? studyGroup.Instructor.InstructorIntId.ToString() : "";
+                criteria.SessionType = "Online";
+                criteria.NumberRegistered = (int)studyGroup.NumberOfStudents;
                 response.Data = criteria;
                 //var center = await _context.TrainingCenters.Where(c => c.Id == center_ID).FirstOrDefaultAsync();
                 //var providersCenters = await _context.ProviderCenters.Where(c => c.CenterId == center_ID).Select(c => c.ProviderId).ToListAsync();
