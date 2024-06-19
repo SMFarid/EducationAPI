@@ -19,13 +19,15 @@ namespace EducationAPI.Services
                 res.Errors = new List<Error> { new Error { Message = " Auditor not found!" }};
                 return res;
             }
+
             UserLoginModel userLoginModel = new UserLoginModel
             {
                 NameAr = auditor.NameAr,
                 NameEn = auditor.NameEn,
                 username = auditor.Username,
                 password = auditor.Password,
-                email = auditor.Email
+                email = auditor.Email,
+                AuditorID = auditor.Id
             };
             res.Data = userLoginModel;
             return res;

@@ -41,10 +41,10 @@ namespace EducationAPI.Repositories
             var temp = _context.Trainees.Where(c => c.GroupIntID == result.GroupIntId).ToList();
             //result.Trainees = temp;
             AuditingSessionCriteraDTO auditingSession = new AuditingSessionCriteraDTO();
-            auditingSession.instructor = result.Instructor != null ? result.Instructor.InstructorIntId.ToString() : "";
+            auditingSession.Instructors = result.Instructor != null ? result.Instructor.InstructorIntId.ToString() : "";
             auditingSession.SessionType = "Online";
             auditingSession.NumberRegistered = (int)result.NumberOfStudents;
-            auditingSession.students = temp.Select(c => new StudentDTO { Id = c.TraineeIntId, NameAr = c.NameAr, NameEN = c.NameEn }).ToList();
+            auditingSession.Students = temp.Select(c => new StudentDTO { Id = c.TraineeIntId, NameAr = c.NameAr, NameEN = c.NameEn }).ToList();
             return auditingSession;
         }
 

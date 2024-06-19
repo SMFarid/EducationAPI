@@ -33,8 +33,10 @@ namespace EducationAPI.Controllers
         // POST api/<AuditingController>
         [HttpPost]
         [Route("SaveAuditingReport")]
-        public void SaveAudit(string value)
+        public async Task<CommonResponse<string>> SaveAudit(AuditSessionSaveModel model)
         {
+            var result = await auditingService.SaveAuditSession(model);
+            return result;
         }
     }
 }

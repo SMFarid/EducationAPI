@@ -6,6 +6,7 @@ using EducationAPI.Models;
 using EducationAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -36,13 +37,18 @@ namespace EducationAPI.Services
 
                 var students = studyGroup.Trainees != null ? studyGroup.Trainees.ToList() : new List<Trainee>();
 
-                criteria.students = students.Select(c => new StudentDTO { Id = c.TraineeIntId, NameAr = c.NameAr, NameEN = c.NameEn }).ToList();
+                criteria.Students = students.Select(c => new StudentDTO { Id = c.TraineeIntId, NameAr = c.NameAr, NameEN = c.NameEn }).ToList();
 
                 criteria.CourseName = "";
                 //criteria.TrainingCenterName = studyGroup.trainingProvider.NameEn;
-                criteria.instructor = studyGroup.Instructor != null ? studyGroup.Instructor.InstructorIntId.ToString() : "";
+                if (studyGroup.Instructor != null)
+                {
+                    criteria.Instructors.Add(
+                        new InstructorDTO() { Id = studyGroup.Instructor.InstructorIntId, NameEN = studyGroup.Instructor.NameEn });
+                }
+                
                 criteria.SessionType = "Online";
-                criteria.NumberRegistered = (int)studyGroup.NumberOfStudents;
+                criteria.NumberRegistered = studyGroup.NumberOfStudents != null ? (int)studyGroup.NumberOfStudents: 0;
                 response.Data = criteria;
                 //var center = await _context.TrainingCenters.Where(c => c.Id == center_ID).FirstOrDefaultAsync();
                 //var providersCenters = await _context.ProviderCenters.Where(c => c.CenterId == center_ID).Select(c => c.ProviderId).ToListAsync();
@@ -90,6 +96,8 @@ namespace EducationAPI.Services
         {
             var response = new CommonResponse<string>();
 
+
+            //Retrieve and Validate
             var auditor = await auditorRepository.GetAuditorById(model.AuditorId);
             if (auditor == null)
             {
@@ -109,7 +117,7 @@ namespace EducationAPI.Services
                 AttendanceType = "Online", //change later
                 Auditor = auditor,
                 AuditorId = model.AuditorId,
-                AuditorName = auditor.NameEn,
+                AuditorName = !auditor.NameEn.IsNullOrEmpty() ? auditor.NameEn :auditor.NameAr,
                 
                 //Course = studyGroup.CourseId, //retrieve name later
                 Instructor = studyGroup.Instructor,
@@ -117,6 +125,12 @@ namespace EducationAPI.Services
                 InstructorName = studyGroup.InstructorName,
                 Conducted = model.Conducted,
                 MaterialDelivered = model.MaterialDelivered,
+                CurrentChapter = model.Current_Chapter,
+                SessionDateTimeStart = model.ReportStart,
+                SessionDateTimeClose = model.ReportEnd,
+                DepiLogoAdded = model.Depi_Logo_Flag,
+                LabFlag = model.Lab_Flag,
+                TestFlag = model.Test_Flag,
                 
                 ConnectionQuality = model.ConnectionQuality.ToString(),
                 VoiceQuality = model.VoiceQuality.ToString(),
