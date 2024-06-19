@@ -2,6 +2,7 @@
 using EducationAPI.Context;
 using EducationAPI.Domain;
 using EducationAPI.DTO;
+using EducationAPI.Enums;
 using EducationAPI.Models;
 using EducationAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -78,12 +79,12 @@ namespace EducationAPI.Services
             var response = new CommonResponse<List<AuditorGroupsDTO>>();
             List<AuditorGroupsDTO> auditorGroups = new List<AuditorGroupsDTO>();
             
-            var roundcodeList = await assignmentRepository.getAuditorAssignment(AuditorID, date);
+            var roundcodeList = await assignmentRepository.getAuditorAssignment(AuditorID, date); //edit to use only date and state
             foreach (var item in roundcodeList)
             {
                 auditorGroups.Add(new AuditorGroupsDTO
                 {
-                    Doneflag = false,
+                    Doneflag = (int)RoundCodeStates.Open,
                     RoundCode = item.StudyGroupRoundCode
                 });
                 
@@ -111,6 +112,8 @@ namespace EducationAPI.Services
                 return response;
             }
             //get study group session
+            var assignedSession = await assignmentRepository.getAssignmentByID(model.Auditing_Session_ID);
+
 
             AuditingSession auditingSession = new AuditingSession
             {

@@ -5,6 +5,7 @@
         public AuditSessionSaveModel() {
             StudentsAttendedList = new List<StudentDTO>();
         }
+        public int Auditing_Session_ID { get; set; }
         public int AuditorId { get; set; }
         public string RoundCode { get; set; }
         public int Study_Group_ID { get; set; }
