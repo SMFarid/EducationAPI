@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EducationAPI.Services
 {
@@ -32,7 +33,14 @@ namespace EducationAPI.Services
                 var studyGroup = await studyGroupRepository.getStudyGroupByID(roundCode);
                 if (studyGroup == null)
                 {
-                    response.Errors.Add(new Error { Message = "Error: Round Code not found" });
+                    response.Errors.Add(new Common.Error { Message = "Error: Round Code not found" });
+                    return response;
+                }
+
+                var roundcodeAssignment = await assignmentRepository.getAssignmentByRoundCode(roundCode);
+                if (roundcodeAssignment != null)
+                {
+                    response.Errors.Add(new Common.Error { Message = "Error: Round Code not found" });
                     return response;
                 }
 
@@ -50,6 +58,8 @@ namespace EducationAPI.Services
                 
                 criteria.SessionType = "Online";
                 criteria.NumberRegistered = studyGroup.NumberOfStudents != null ? (int)studyGroup.NumberOfStudents: 0;
+                criteria.Study_Group_ID = studyGroup.GroupIntId;
+                criteria.Auditing_Session_ID = roundcodeAssignment.AuditingSessionId;
                 response.Data = criteria;
                 //var center = await _context.TrainingCenters.Where(c => c.Id == center_ID).FirstOrDefaultAsync();
                 //var providersCenters = await _context.ProviderCenters.Where(c => c.CenterId == center_ID).Select(c => c.ProviderId).ToListAsync();
@@ -79,7 +89,7 @@ namespace EducationAPI.Services
             var response = new CommonResponse<List<AuditorGroupsDTO>>();
             List<AuditorGroupsDTO> auditorGroups = new List<AuditorGroupsDTO>();
             
-            var roundcodeList = await assignmentRepository.getAuditorAssignment(AuditorID, date); //edit to use only date and state
+            var roundcodeList = await assignmentRepository.getAuditorAssignment(date); //edit to use only date and state
             foreach (var item in roundcodeList)
             {
                 auditorGroups.Add(new AuditorGroupsDTO

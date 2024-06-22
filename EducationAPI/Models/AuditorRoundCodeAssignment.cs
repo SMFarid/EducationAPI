@@ -5,11 +5,11 @@ namespace EducationAPI.Domain;
 
 public partial class AuditorRoundCodeAssignment
 {
-    public int AuditorId { get; set; }
+    public int? AuditorId { get; set; }
 
     public string StudyGroupRoundCode { get; set; }
 
-    public DateOnly? Date { get; set; }
+    public DateTime? Date { get; set; }
 
     public bool? Conducted { get; set; }
 

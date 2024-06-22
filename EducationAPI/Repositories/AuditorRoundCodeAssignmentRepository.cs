@@ -3,6 +3,7 @@ using EducationAPI.Domain;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,9 +17,16 @@ namespace EducationAPI.Repositories
             _context = new StudentDBContext();
         }
 
-        public async Task<IEnumerable<AuditorRoundCodeAssignment>> getAuditorAssignment(int auditor_id, DateTime date)
+        public async Task<IEnumerable<AuditorRoundCodeAssignment>> getAuditorAssignment(DateTime date)
         {
-            var result = await _context.AuditorRoundCodeAssignments.Where(c=> c.AuditorId == auditor_id).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date
+            var result = await _context.AuditorRoundCodeAssignments.Where(c=> c.Date == date).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date
+
+            return result;
+        }
+
+        public async Task<AuditorRoundCodeAssignment> getAssignmentByRoundCode(string roundCode)
+        {
+            var result = await _context.AuditorRoundCodeAssignments.Where(c => c.StudyGroupRoundCode == roundCode).FirstOrDefaultAsync(); //null check  && c.Date.Value.Date  == date.Date
 
             return result;
         }
