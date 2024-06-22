@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Error = EducationAPI.Common.Error;
 
 namespace EducationAPI.Services
 {
