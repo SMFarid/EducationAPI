@@ -28,6 +28,8 @@ namespace EducationAPI.Common
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             var authHeader = Request.Headers["Authorization"].ToString();
+            if (!Request.Headers.ContainsKey("Authorization"))
+                return await Task.FromResult(AuthenticateResult.NoResult());
 
             if (authHeader != null && authHeader.StartsWith("basic", StringComparison.OrdinalIgnoreCase))
             {
@@ -64,13 +66,7 @@ namespace EducationAPI.Common
 
                 return AuthenticateResult.Fail("Invalid Authorization Header");
             }
-            else
-            {
-                Response.StatusCode = 401;
-                Response.Headers.Add("WWW-Authenticate", "Basic realm=\"dotnetthoughts.net\"");
-
-                return AuthenticateResult.Fail("Invalid Authorization Header");
-            }
+            return await Task.FromResult(AuthenticateResult.NoResult());
         }
     }
 }

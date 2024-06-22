@@ -22,7 +22,7 @@ namespace EducationAPI.Services
         AuditorRepository auditorRepository = new AuditorRepository();
         AuditingSessionRepository auditingSessionRepository = new AuditingSessionRepository();
 
-        public async Task<CommonResponse<AuditingSessionCriteraDTO>> getAuditingCritera(string roundCode)
+        public async Task<CommonResponse<AuditingSessionCriteraDTO>> getAuditingCritera(string roundCode, int Audtor_ID)
         {
             var response = new CommonResponse<AuditingSessionCriteraDTO>();
             var criteria = new AuditingSessionCriteraDTO();

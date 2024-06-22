@@ -18,6 +18,7 @@
         public Boolean Depi_Logo_Flag { get; set; }
         public string Current_Chapter { get; set; }
         public List<StudentDTO> StudentsAttendedList { get; set; }
+        public int Instructor_ID { get; set; }
         public int ConnectionQuality { get; set; }
         public int VoiceQuality {  get; set; }
         public int VideoQuality { get; set; }

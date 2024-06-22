@@ -2,6 +2,7 @@
 using EducationAPI.Context;
 using EducationAPI.DTO;
 using EducationAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -12,15 +13,17 @@ namespace EducationAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
     public class AuditingController : ControllerBase
     {
         AuditingService auditingService = new AuditingService();
         // GET: api/<AuditingController>
         [HttpGet]
+        
         [Route("GetCriteria")]
-        public async Task<CommonResponse<AuditingSessionCriteraDTO>> GetCritera(string roundcode)
+        public async Task<CommonResponse<AuditingSessionCriteraDTO>> GetCritera(string roundcode, int Auditor_ID)
         {
-            return await auditingService.getAuditingCritera(roundcode);
+            return await auditingService.getAuditingCritera(roundcode, Auditor_ID);
         }
 
         [HttpGet]
