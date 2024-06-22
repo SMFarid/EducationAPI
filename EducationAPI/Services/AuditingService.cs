@@ -89,7 +89,7 @@ namespace EducationAPI.Services
             var response = new CommonResponse<List<AuditorGroupsDTO>>();
             List<AuditorGroupsDTO> auditorGroups = new List<AuditorGroupsDTO>();
             
-            var roundcodeList = await assignmentRepository.getAuditorAssignment(date); //edit to use only date and state
+            var roundcodeList = await assignmentRepository.getAuditorAssignment(AuditorID, date); //edit to use only date and state
             foreach (var item in roundcodeList)
             {
                 auditorGroups.Add(new AuditorGroupsDTO
