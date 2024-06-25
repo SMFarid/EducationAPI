@@ -114,16 +114,26 @@ public partial class StudentDBContext : DbContext
             entity.Property(e => e.CurrentChapter)
                 .HasMaxLength(50)
                 .HasColumnName("Current_Chapter");
+            entity.Property(e => e.PlannedChapter)
+                .HasMaxLength(50)
+                .HasColumnName("Planned_Chapter");
+            entity.Property(e => e.InstructorResponsiveness)
+                .HasMaxLength(50)
+                .HasColumnName("Instructor_Responsiveness");
             entity.Property(e => e.EndTime).HasColumnName("End_Time");
             //entity.Property(e => e.FilesDelivered).HasColumnName("Files_Delivered");
             entity.Property(e => e.InstructorId).HasColumnName("Instructor_ID");
             entity.Property(e => e.InstructorName)
                 .HasMaxLength(100)
                 .HasColumnName("Instructor_Name");
-            //entity.Property(e => e.LabTestFlag)
-                //.HasMaxLength(1)
-                //.IsUnicode(false)
-                //.HasColumnName("Lab_Test_Flag");
+            entity.Property(e => e.TestFlag)
+            .HasMaxLength(1)
+            .IsUnicode(false)
+            .HasColumnName("Test_Flag");
+            entity.Property(e => e.LabFlag)
+            .HasMaxLength(1)
+            .IsUnicode(false)
+            .HasColumnName("Lab_Flag");
             entity.Property(e => e.MaterialDelivered).HasColumnName("Material_Delivered");
             entity.Property(e => e.NumberAttended)
                 .HasColumnType("numeric(18, 0)")
@@ -157,6 +167,18 @@ public partial class StudentDBContext : DbContext
             entity.Property(e => e.VoiceQuality)
                 .HasMaxLength(50)
                 .HasColumnName("Voice_Quality");
+            entity.Property(e => e.SessionLinkDelivered)
+            .HasMaxLength(1)
+            .IsUnicode(false)
+            .HasColumnName("Session_Link_Delivered");
+            entity.Property(e => e.DepiLogoAdded)
+            .HasMaxLength(1)
+            .IsUnicode(false)
+            .HasColumnName("DEPI_Logo_Added");
+            entity.Property(e => e.PresentationUsed)
+            .HasMaxLength(1)
+            .IsUnicode(false)
+            .HasColumnName("Presentation_Used");
 
             entity.HasOne(d => d.Auditor).WithMany(p => p.AuditingSessions)
                 .HasForeignKey(d => d.AuditorId)

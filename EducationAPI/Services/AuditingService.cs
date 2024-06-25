@@ -129,7 +129,7 @@ namespace EducationAPI.Services
             AuditingSession auditingSession = new AuditingSession
             {
                 AttendanceType = "Online", //change later
-                Auditor = auditor,
+                //Auditor = auditor,
                 AuditorId = model.AuditorId,
                 AuditorName = !auditor.NameEn.IsNullOrEmpty() ? auditor.NameEn :auditor.NameAr,
                 
