@@ -39,7 +39,7 @@ namespace EducationAPI.Services
                 }
 
                 var roundcodeAssignment = await assignmentRepository.getAssignmentByRoundCode(roundCode);
-                if (roundcodeAssignment != null)
+                if (roundcodeAssignment == null)
                 {
                     response.Errors.Add(new Common.Error { Message = "Error: Round Code not found" });
                     return response;
@@ -60,7 +60,7 @@ namespace EducationAPI.Services
                 criteria.SessionType = "Online";
                 criteria.NumberRegistered = studyGroup.NumberOfStudents != null ? (int)studyGroup.NumberOfStudents: 0;
                 criteria.Study_Group_ID = studyGroup.GroupIntId;
-                criteria.Auditing_Session_ID = roundcodeAssignment.AuditingSessionId;
+                criteria.Auditing_Session_ID = roundcodeAssignment.AssignmentSessionID;
                 response.Data = criteria;
                 //var center = await _context.TrainingCenters.Where(c => c.Id == center_ID).FirstOrDefaultAsync();
                 //var providersCenters = await _context.ProviderCenters.Where(c => c.CenterId == center_ID).Select(c => c.ProviderId).ToListAsync();
@@ -134,14 +134,14 @@ namespace EducationAPI.Services
                 AuditorName = !auditor.NameEn.IsNullOrEmpty() ? auditor.NameEn :auditor.NameAr,
                 
                 //Course = studyGroup.CourseId, //retrieve name later
-                Instructor = studyGroup.Instructor,
-                InstructorId = (int)studyGroup.InstructorId,
+                //Instructor = studyGroup.Instructor,
+                //InstructorId = (int)studyGroup.InstructorId,
                 InstructorName = studyGroup.InstructorName,
                 Conducted = model.Conducted,
                 MaterialDelivered = model.MaterialDelivered,
                 CurrentChapter = model.Current_Chapter,
-                SessionDateTimeStart = model.ReportStart,
-                SessionDateTimeClose = model.ReportEnd,
+                //SessionDateTimeStart = (DateTime)model.ReportStart,
+                //SessionDateTimeClose = model.ReportEnd,
                 DepiLogoAdded = model.Depi_Logo_Flag,
                 LabFlag = model.Lab_Flag,
                 TestFlag = model.Test_Flag,

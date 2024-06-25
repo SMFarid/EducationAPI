@@ -12,7 +12,7 @@ public partial class AuditingSession
 
     public string? AuditorName { get; set; }
 
-    public DateTime SessionDateTimeStart { get; set; }
+    public DateTime? SessionDateTimeStart { get; set; }
 
     public DateTime? SessionDateTimeClose { get; set; }
 

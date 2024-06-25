@@ -13,7 +13,7 @@ public partial class AuditorRoundCodeAssignment
 
     public bool? Conducted { get; set; }
 
-    public int AuditingSessionId { get; set; }
+    public int AssignmentSessionID { get; set; }
 
     public virtual Auditor Auditor { get; set; } = null!;
 }

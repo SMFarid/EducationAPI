@@ -9,8 +9,8 @@
         public int AuditorId { get; set; }
         public string RoundCode { get; set; }
         public int Study_Group_ID { get; set; }
-        public DateTime ReportStart { get; set; }
-        public DateTime ReportEnd { get; set; }
+        public DateTime? ReportStart { get; set; }
+        public DateTime? ReportEnd { get; set; }
         public Boolean Conducted { get; set; }
         public Boolean MaterialDelivered { get; set; }
         public Boolean Lab_Flag { get; set; }

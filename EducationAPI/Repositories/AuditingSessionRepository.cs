@@ -15,8 +15,8 @@ namespace EducationAPI.Repositories
         {
             try
             {
-                _context.Add(session);
-                _context.SaveChanges();
+                _context.AuditingSessions.Add(session);
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {

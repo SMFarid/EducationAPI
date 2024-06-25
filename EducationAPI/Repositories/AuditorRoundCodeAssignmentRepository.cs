@@ -40,7 +40,7 @@ namespace EducationAPI.Repositories
 
         public async Task<AuditorRoundCodeAssignment> getAssignmentByID(int sessionID)
         {
-            var result = await _context.AuditorRoundCodeAssignments.Where(c => c.AuditingSessionId == sessionID).FirstOrDefaultAsync(); 
+            var result = await _context.AuditorRoundCodeAssignments.Where(c => c.AssignmentSessionID == sessionID).FirstOrDefaultAsync(); 
             return result;
         }
     }

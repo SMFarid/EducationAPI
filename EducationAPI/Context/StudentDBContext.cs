@@ -217,7 +217,7 @@ public partial class StudentDBContext : DbContext
                 .HasNoKey()
                 .ToTable("Auditor_Round_Code_Assignment");
 
-            entity.Property(e => e.AuditingSessionId).HasColumnName("Auditing_Session_ID");
+            entity.Property(e => e.AssignmentSessionID).HasColumnName("Assignment_Session_ID");
             entity.Property(e => e.AuditorId).HasColumnName("Auditor_ID");
             entity.Property(e => e.StudyGroupRoundCode)
                 .HasMaxLength(50)
