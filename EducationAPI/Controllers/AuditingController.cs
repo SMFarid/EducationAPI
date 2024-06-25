@@ -41,5 +41,20 @@ namespace EducationAPI.Controllers
             var result = await auditingService.SaveAuditSession(model);
             return result;
         }
+
+        [HttpGet]
+        [Route("GetRoundCodesForEdit")]
+        public async Task<CommonResponse<List<RoundCodeAssignmentDTO>>> GetRoundCodesForEdit()
+        {
+            return await auditingService.getRoundCodes();
+        }
+
+        [HttpPost]
+        [Route("EditRoundCodeAssignment")]
+        public async Task<CommonResponse<string>> EditRoundCodeAssignment(EditAssignmentModel model)
+        {
+            var result = await auditingService.EditAuditAssignment(model);
+            return result;
+        }
     }
 }

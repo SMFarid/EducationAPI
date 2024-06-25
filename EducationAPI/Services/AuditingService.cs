@@ -24,6 +24,7 @@ namespace EducationAPI.Services
         AuditorRepository auditorRepository = new AuditorRepository();
         AuditingSessionRepository auditingSessionRepository = new AuditingSessionRepository();
 
+        #region Auditing Session
         public async Task<CommonResponse<AuditingSessionCriteraDTO>> getAuditingCritera(string roundCode, int Audtor_ID)
         {
             var response = new CommonResponse<AuditingSessionCriteraDTO>();
@@ -159,16 +160,52 @@ namespace EducationAPI.Services
             return response;
         }
 
+        #endregion
+
         //public async Task<CommonResponse<List<string>>> getAuditSessionCriteria(int AuditorID, string RoundCode)
         //{
         //    var response = new CommonResponse<List<String>>();
 
-            
 
-            
+
+
 
         //    return response;
         //}
+
+        #region Editing Assignments
+
+        public async Task<CommonResponse<List<RoundCodeAssignmentDTO>>> getRoundCodes()
+        {
+            var response = new CommonResponse<List<RoundCodeAssignmentDTO>>();
+            List<RoundCodeAssignmentDTO> StudyGroups = new List<RoundCodeAssignmentDTO>();
+
+            
+            response.Data = StudyGroups;
+            return response;
+        }
+
+
+
+        public async Task<CommonResponse<string>> EditAuditAssignment(EditAssignmentModel model)
+        {
+            var response = new CommonResponse<string>();
+            List<AuditorGroupsDTO> auditorGroups = new List<AuditorGroupsDTO>();
+
+
+            return response;
+        }
+
+        public async Task<CommonResponse<string>> AddAuditAssignment(AddAssignmentModel model)
+        {
+            var response = new CommonResponse<string>();
+            List<AuditorGroupsDTO> auditorGroups = new List<AuditorGroupsDTO>();
+
+
+            return response;
+        }
+
+        #endregion
 
     }
 }
