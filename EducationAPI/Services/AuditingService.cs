@@ -212,7 +212,8 @@ namespace EducationAPI.Services
                         AssignmentID = code.AssignmentSessionID,
                         Status = 1,
                         AssignmentDate = code.Date,
-                        AuditorID = code.AuditorId
+                        AuditorID = code.AuditorId,
+                        Conducted = code.Conducted
                     });
                 }
             }
