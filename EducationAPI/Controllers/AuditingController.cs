@@ -63,5 +63,13 @@ namespace EducationAPI.Controllers
             var result = await auditingService.EditAuditAssignment(model);
             return result;
         }
+
+        [HttpPost]
+        [Route("DeleteRoundCodeAssignment")]
+        public async Task<CommonResponse<string>> DeleteRoundCodeAssignment(EditAssignmentModel model)
+        {
+            var result = await auditingService.EditAuditAssignment(model);
+            return result;
+        }
     }
 }

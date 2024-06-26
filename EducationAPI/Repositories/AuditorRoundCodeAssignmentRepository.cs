@@ -38,6 +38,19 @@ namespace EducationAPI.Repositories
             return result;
         }
 
+        public string DeleteAssignmentByRoundCode(AuditorRoundCodeAssignment assignment)
+        {
+            try
+            {
+                var result = _context.Remove(assignment);
+            }
+            catch(Exception ex)
+            {
+                return ex.InnerException.ToString();
+            }
+            return "Success";
+        }
+
         public async Task<AuditorRoundCodeAssignment> getAssignmentByID(int sessionID)
         {
             var result = await _context.AuditorRoundCodeAssignments.Where(c => c.AssignmentSessionID == sessionID).FirstOrDefaultAsync(); 

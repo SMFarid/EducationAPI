@@ -216,6 +216,23 @@ namespace EducationAPI.Services
             return response;
         }
 
+        public async Task<CommonResponse<string>> DeleteAuditAssignment(EditAssignmentModel model)
+        {
+            var response = new CommonResponse<string>();
+            var roundCodeAssign = await assignmentRepository.getAssignmentByRoundCode(model.RoundCode);
+
+            if (roundCodeAssign == null)
+            {
+                response.Errors.Add(new Error { Message = "Error: Round Code not found" });
+                return response;
+            }
+
+            response.Data = assignmentRepository.DeleteAssignmentByRoundCode(roundCodeAssign);
+
+
+            return response;
+        }
+
         public async Task<CommonResponse<string>> AddAuditAssignment(AddAssignmentModel model)
         {
             var response = new CommonResponse<string>();
