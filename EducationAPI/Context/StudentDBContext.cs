@@ -235,9 +235,8 @@ public partial class StudentDBContext : DbContext
 
         modelBuilder.Entity<AuditorRoundCodeAssignment>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("Auditor_Round_Code_Assignment");
+            entity.ToTable("Auditor_Round_Code_Assignment");
+            entity.HasKey(e => e.AssignmentSessionID);
 
             entity.Property(e => e.AssignmentSessionID).HasColumnName("Assignment_Session_ID");
             entity.Property(e => e.AuditorId).HasColumnName("Auditor_ID");

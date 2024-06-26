@@ -80,7 +80,7 @@ namespace EducationAPI.Repositories
             }
             catch (Exception ex)
             {
-                return ex.InnerException.ToString();
+                return ex.ToString();
             }
             return "Success";
         }

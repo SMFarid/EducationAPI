@@ -284,7 +284,8 @@ namespace EducationAPI.Services
             {
                 AuditorId = model.AuditorID,
                 Conducted = 0,
-                Date = model.AssignmentDate
+                Date = model.AssignmentDate,
+                StudyGroupRoundCode = model.RoundCode
             };
 
             response.Data = assignmentRepository.Add(auditorRoundCode);
