@@ -65,6 +65,14 @@ namespace EducationAPI.Controllers
         }
 
         [HttpPost]
+        [Route("AddRoundCodeAssignment")]
+        public async Task<CommonResponse<string>> AddRoundCodeAssignment(AddAssignmentModel model)
+        {
+            var result = await auditingService.AddAuditAssignment(model);
+            return result;
+        }
+
+        [HttpPost]
         [Route("DeleteRoundCodeAssignment")]
         public async Task<CommonResponse<string>> DeleteRoundCodeAssignment(EditAssignmentModel model)
         {
