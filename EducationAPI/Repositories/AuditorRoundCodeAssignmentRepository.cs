@@ -24,6 +24,13 @@ namespace EducationAPI.Repositories
             return result;
         }
 
+        public async Task<IEnumerable<AuditorRoundCodeAssignment>> getAssignmentsByDate(DateTime date)
+        {
+            var result = await _context.AuditorRoundCodeAssignments.Where(c => c.Date == date).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date
+
+            return result;
+        }
+
         public async Task<IEnumerable<AuditorRoundCodeAssignment>> getAuditorAssignment(int AuditorID, DateTime date)
         {
             var result = await _context.AuditorRoundCodeAssignments.Where(c => c.AuditorId == AuditorID).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date
@@ -33,7 +40,7 @@ namespace EducationAPI.Repositories
 
         public async Task<AuditorRoundCodeAssignment> getAssignmentByRoundCode(string roundCode)
         {
-            var result = await _context.AuditorRoundCodeAssignments.Where(c => c.StudyGroupRoundCode == roundCode).FirstOrDefaultAsync(); //null check  && c.Date.Value.Date  == date.Date
+            var result = await _context.AuditorRoundCodeAssignments.Where(c => c.StudyGroupRoundCode == roundCode).FirstOrDefaultAsync();
 
             return result;
         }
@@ -45,6 +52,33 @@ namespace EducationAPI.Repositories
                 var result = _context.Remove(assignment);
             }
             catch(Exception ex)
+            {
+                return ex.InnerException.ToString();
+            }
+            return "Success";
+        }
+
+        public string Save()
+        {
+            try
+            {
+                var result = _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                return ex.InnerException.ToString();
+            }
+            return "Success";
+        }
+
+        public string Add(AuditorRoundCodeAssignment codeAssignment)
+        {
+            try
+            {
+                _context.AuditorRoundCodeAssignments.Add(codeAssignment);
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
             {
                 return ex.InnerException.ToString();
             }

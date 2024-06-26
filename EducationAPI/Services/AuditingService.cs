@@ -200,7 +200,33 @@ namespace EducationAPI.Services
             var response = new CommonResponse<List<RoundCodeAssignmentDTO>>();
             List<RoundCodeAssignmentDTO> StudyGroups = new List<RoundCodeAssignmentDTO>();
 
+            var assignedCodes = await assignmentRepository.getAssignmentsByDate(DateTime.Now);
             
+            if (assignedCodes != null)
+            {
+                foreach (var code in assignedCodes)
+                {
+                    StudyGroups.Add(new RoundCodeAssignmentDTO
+                    {
+                        RoundCode = code.StudyGroupRoundCode,
+                        AssignmentID = code.AssignmentSessionID,
+                        Status = 1
+                    });
+                }
+            }
+
+            var roundCodesList = await studyGroupRepository.getAllGroups();
+
+            foreach (var code in roundCodesList)
+            {
+                StudyGroups.Add(new RoundCodeAssignmentDTO
+                {
+                    RoundCode = code.RoundCode,
+                    AssignmentID = 0,
+                    Status = 0
+                });
+            }
+
             response.Data = StudyGroups;
             return response;
         }
@@ -210,7 +236,19 @@ namespace EducationAPI.Services
         public async Task<CommonResponse<string>> EditAuditAssignment(EditAssignmentModel model)
         {
             var response = new CommonResponse<string>();
-            List<AuditorGroupsDTO> auditorGroups = new List<AuditorGroupsDTO>();
+            var roundCodeAssign = await assignmentRepository.getAssignmentByID(model.AssignmentID);
+
+            if (roundCodeAssign == null)
+            {
+                response.Errors.Add(new Error { Message = "Error: Round Code not found" });
+                return response;
+            }
+
+            roundCodeAssign.AuditorId = model.AuditorID;
+            roundCodeAssign.Conducted = model.Conducted;
+            roundCodeAssign.Date = model.AssignmentDate;
+
+            response.Data = assignmentRepository.Save();
 
 
             return response;
@@ -236,7 +274,14 @@ namespace EducationAPI.Services
         public async Task<CommonResponse<string>> AddAuditAssignment(AddAssignmentModel model)
         {
             var response = new CommonResponse<string>();
-            List<AuditorGroupsDTO> auditorGroups = new List<AuditorGroupsDTO>();
+            AuditorRoundCodeAssignment auditorRoundCode = new AuditorRoundCodeAssignment
+            {
+                AuditorId = model.AuditorID,
+                Conducted = 0,
+                Date = model.AssignmentDate
+            };
+
+            response.Data = assignmentRepository.Add(auditorRoundCode);
 
 
             return response;

@@ -11,7 +11,7 @@ public partial class AuditorRoundCodeAssignment
 
     public DateTime? Date { get; set; }
 
-    public bool? Conducted { get; set; }
+    public int? Conducted { get; set; }
 
     public int AssignmentSessionID { get; set; }
 

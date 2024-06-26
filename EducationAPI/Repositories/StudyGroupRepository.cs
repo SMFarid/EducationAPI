@@ -14,6 +14,12 @@ namespace EducationAPI.Repositories
             _context = new StudentDBContext();
         }
 
+        public async Task<IEnumerable<StudyGroup>> getAllGroups()
+        {
+            var result = await _context.StudyGroups.ToListAsync();
+            return result;
+        }
+
         public async Task<StudyGroup> getStudyGroupByID (string ID)
         {
             var result = await _context.StudyGroups.Where(c => c.RoundCode == ID)
