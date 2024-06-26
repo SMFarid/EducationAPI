@@ -210,7 +210,9 @@ namespace EducationAPI.Services
                     {
                         RoundCode = code.StudyGroupRoundCode,
                         AssignmentID = code.AssignmentSessionID,
-                        Status = 1
+                        Status = 1,
+                        AssignmentDate = code.Date,
+                        AuditorID = code.AuditorId
                     });
                 }
             }
