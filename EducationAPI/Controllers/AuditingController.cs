@@ -49,6 +49,13 @@ namespace EducationAPI.Controllers
             return await auditingService.getRoundCodes();
         }
 
+        [HttpGet]
+        [Route("GetAuditorsList")]
+        public async Task<CommonResponse<List<AuditorDTO>>> GetAuditorsList()
+        {
+            return await auditingService.getAuditorList();
+        }
+
         [HttpPost]
         [Route("EditRoundCodeAssignment")]
         public async Task<CommonResponse<string>> EditRoundCodeAssignment(EditAssignmentModel model)

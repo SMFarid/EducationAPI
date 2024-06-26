@@ -24,5 +24,11 @@ namespace EducationAPI.Repositories
             var res = await _context.Auditors.Where(c => c.Id == id).FirstOrDefaultAsync();
             return res;
         }
+
+        public async Task<List<Auditor>> getAllAuditors()
+        {
+            var result = await _context.Auditors.OrderBy(c => c.Id).ToListAsync();
+            return result;
+        }
     }
 }

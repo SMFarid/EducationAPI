@@ -48,7 +48,7 @@ namespace EducationAPI.Services
 
                 var students = studyGroup.Trainees != null ? studyGroup.Trainees.ToList() : new List<Trainee>();
 
-                criteria.Students = students.Select(c => new StudentDTO { Id = c.TraineeIntId, NameAr = c.NameAr, NameEN = c.NameEn }).ToList();
+                criteria.Students = students.Select(c => new StudentDTO { Id = c.TraineeIntId, NameAr = c.NameAr, NameEN = c.NameEn }).OrderBy(c=> c.NameAr).ToList();
 
                 criteria.CourseName = "";
                 //criteria.TrainingCenterName = studyGroup.trainingProvider.NameEn;
@@ -102,6 +102,26 @@ namespace EducationAPI.Services
                 
             }
             response.Data = auditorGroups;
+            return response;
+        }
+
+        public async Task<CommonResponse<List<AuditorDTO>>> getAuditorList()
+        {
+            var response = new CommonResponse<List<AuditorDTO>>();
+            List<AuditorDTO> auditors = new List<AuditorDTO>();
+
+            var auditorsList = await auditorRepository.getAllAuditors();
+            foreach (var item in auditorsList)
+            {
+                auditors.Add(new AuditorDTO
+                {
+                    AuditorID = item.Id,
+                    NameAr = item.NameAr,
+                    NameEn = item.NameEn
+                });
+            }
+
+            response.Data = auditors;
             return response;
         }
 
