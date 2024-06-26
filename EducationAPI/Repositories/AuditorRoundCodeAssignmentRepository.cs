@@ -26,7 +26,7 @@ namespace EducationAPI.Repositories
 
         public async Task<IEnumerable<AuditorRoundCodeAssignment>> getAssignmentsByDate(DateTime date)
         {
-            var result = await _context.AuditorRoundCodeAssignments.Where(c => c.Date == date).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date
+            var result = await _context.AuditorRoundCodeAssignments.Where(c => c.Date.Date == date.Date).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date
 
             return result;
         }

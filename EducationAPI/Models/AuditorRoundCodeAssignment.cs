@@ -9,7 +9,7 @@ public partial class AuditorRoundCodeAssignment
 
     public string StudyGroupRoundCode { get; set; }
 
-    public DateTime? Date { get; set; }
+    public DateTime Date { get; set; }
 
     public int? Conducted { get; set; }
 

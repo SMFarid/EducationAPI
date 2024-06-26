@@ -219,12 +219,15 @@ namespace EducationAPI.Services
 
             foreach (var code in roundCodesList)
             {
-                StudyGroups.Add(new RoundCodeAssignmentDTO
+                if (!StudyGroups.Select(c => c.RoundCode).ToList().Contains(code.RoundCode))
                 {
-                    RoundCode = code.RoundCode,
-                    AssignmentID = 0,
-                    Status = 0
-                });
+                    StudyGroups.Add(new RoundCodeAssignmentDTO
+                    {
+                        RoundCode = code.RoundCode,
+                        AssignmentID = 0,
+                        Status = 0
+                    });
+                }
             }
 
             response.Data = StudyGroups;
@@ -246,7 +249,7 @@ namespace EducationAPI.Services
 
             roundCodeAssign.AuditorId = model.AuditorID;
             roundCodeAssign.Conducted = model.Conducted;
-            roundCodeAssign.Date = model.AssignmentDate;
+            roundCodeAssign.Date = (DateTime)model.AssignmentDate;
 
             response.Data = assignmentRepository.Save();
 
