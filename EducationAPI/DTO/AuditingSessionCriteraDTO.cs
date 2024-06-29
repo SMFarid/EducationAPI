@@ -15,6 +15,7 @@
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public List<InstructorDTO> Instructors { get; set; }
+        public string OtherInstructorName { get; set; }
         public string SessionType { get; set; }
         public int NumberRegistered { get; set; }
         public int Study_Group_ID { get; set; }

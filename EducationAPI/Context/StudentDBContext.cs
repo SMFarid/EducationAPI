@@ -477,7 +477,7 @@ public partial class StudentDBContext : DbContext
             entity.ToTable("Instructor");
 
             entity.Property(e => e.InstructorIntId).HasColumnName("Instructor_Int_ID");
-            entity.Property(e => e.Active).HasColumnType("numeric(1, 0)");
+            entity.Property(e => e.Active).HasColumnType("Bit");
             entity.Property(e => e.Address).HasMaxLength(100);
             entity.Property(e => e.Certificate).HasMaxLength(50);
             entity.Property(e => e.City).HasMaxLength(50);

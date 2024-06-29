@@ -46,7 +46,7 @@ public partial class Instructor
 
     public DateOnly? GraduationDate { get; set; }
 
-    public decimal Active { get; set; }
+    public Boolean Active { get; set; }
 
     public virtual ICollection<AuditingSession> AuditingSessions { get; set; } = new List<AuditingSession>();
 

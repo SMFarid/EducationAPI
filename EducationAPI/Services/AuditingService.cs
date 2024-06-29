@@ -156,7 +156,7 @@ namespace EducationAPI.Services
                 
                 //Course = studyGroup.CourseId, //retrieve name later
                 //Instructor = studyGroup.Instructor,
-                //InstructorId = (int)studyGroup.InstructorId,
+                InstructorId = (int)studyGroup.InstructorId != null ? (int)studyGroup.InstructorId: 0,
                 InstructorName = studyGroup.InstructorName,
                 Conducted = model.Conducted,
                 MaterialDelivered = model.MaterialDelivered,

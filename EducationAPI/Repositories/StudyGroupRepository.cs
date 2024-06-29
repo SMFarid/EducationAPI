@@ -23,7 +23,7 @@ namespace EducationAPI.Repositories
         public async Task<StudyGroup> getStudyGroupByID (string ID)
         {
             var result = await _context.StudyGroups.Where(c => c.RoundCode == ID)
-                //.Include(c => c.Instructor)
+                .Include(c => c.Instructor)
                 .Include(c => c.Trainees)
                 //.Include(c => c.TrackIntNavigation)
                 .FirstOrDefaultAsync();
