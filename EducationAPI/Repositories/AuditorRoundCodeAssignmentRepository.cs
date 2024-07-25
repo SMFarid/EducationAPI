@@ -33,9 +33,16 @@ namespace EducationAPI.Repositories
 
         public async Task<IEnumerable<AuditorRoundCodeAssignment>> getAuditorAssignment(int AuditorID, DateTime date)
         {
-            var result = await _context.AuditorRoundCodeAssignments.Where(c => c.AuditorId == AuditorID).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date
+            try
+            {
+                var result = await _context.AuditorRoundCodeAssignments.Where(c => c.AuditorId == AuditorID).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date
 
-            return result;
+                return result;
+            } catch (Exception ex)
+            {
+                Console.Out.WriteLine( ex.InnerException.ToString());
+            }
+            return null;
         }
 
         public async Task<AuditorRoundCodeAssignment> getAssignmentByRoundCode(string roundCode)

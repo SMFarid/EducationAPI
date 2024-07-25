@@ -13,23 +13,31 @@ namespace EducationAPI.Services
         public async Task<CommonResponse<UserLoginModel>> Login (LoginDTO login)
         {
             var res = new CommonResponse<UserLoginModel>();
-            var auditor = await repository.getAuditor(login.username, login.password);
-            if (auditor == null)
+            try
             {
-                res.Errors = new List<Error> { new Error { Message = " Auditor not found!" }};
+                var auditor = await repository.getAuditor(login.username, login.password);
+                if (auditor == null)
+                {
+                    res.Errors = new List<Error> { new Error { Message = " Auditor not found!" } };
+                    return res;
+                }
+
+                UserLoginModel userLoginModel = new UserLoginModel
+                {
+                    NameAr = auditor.NameAr,
+                    NameEn = auditor.NameEn,
+                    username = auditor.Username,
+                    password = auditor.Password,
+                    email = auditor.Email,
+                    AuditorID = auditor.Id
+                };
+                res.Data = userLoginModel;
+            } catch (Exception ex)
+            {
+                res.Errors = new List<Error> { new Error { Message = ex.ToString() } };
                 return res;
             }
-
-            UserLoginModel userLoginModel = new UserLoginModel
-            {
-                NameAr = auditor.NameAr,
-                NameEn = auditor.NameEn,
-                username = auditor.Username,
-                password = auditor.Password,
-                email = auditor.Email,
-                AuditorID = auditor.Id
-            };
-            res.Data = userLoginModel;
+            
             return res;
         }
     }
