@@ -14,7 +14,8 @@ namespace EducationAPI.Repositories
 
         public async Task<Auditor> getAuditor(string username, string password)
         {
-            var result = await _context.Auditors.Where(c => c.Username == username && c.Password == password).FirstOrDefaultAsync(); //null check  && c.Date.Value.Date  == date.Date
+            var result = await _context.Auditors.Where(c => c.Username.ToLower() == username.ToLower() && c.Password
+            == password).FirstOrDefaultAsync(); //null check  && c.Date.Value.Date  == date.Date
 
             return result;
         }

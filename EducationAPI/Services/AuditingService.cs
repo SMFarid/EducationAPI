@@ -97,7 +97,8 @@ namespace EducationAPI.Services
                 auditorGroups.Add(new AuditorGroupsDTO
                 {
                     Doneflag = (int)RoundCodeStates.Open,
-                    RoundCode = item.StudyGroupRoundCode
+                    RoundCode = item.StudyGroupRoundCode,
+                    SessionDateTime = item.Date.ToShortTimeString()
                 });
                 
             }
