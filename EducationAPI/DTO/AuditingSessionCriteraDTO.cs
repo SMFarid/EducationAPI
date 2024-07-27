@@ -19,5 +19,6 @@
         public string SessionType { get; set; }
         public int NumberRegistered { get; set; }
         public int Study_Group_ID { get; set; }
+        public string? MeetingLink { get; set; }
     }
 }

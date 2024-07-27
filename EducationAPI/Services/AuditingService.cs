@@ -7,6 +7,7 @@ using EducationAPI.Models;
 using EducationAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using Microsoft.EntityFrameworkCore.Update.Internal;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -62,6 +63,14 @@ namespace EducationAPI.Services
                 criteria.NumberRegistered = studyGroup.NumberOfStudents != null ? (int)studyGroup.NumberOfStudents: 0;
                 criteria.Study_Group_ID = studyGroup.GroupIntId;
                 criteria.Auditing_Session_ID = roundcodeAssignment.AssignmentSessionID;
+                criteria.MeetingLink = studyGroup.MeetingLink;
+                var startTime = await assignmentRepository.getAssignmentByRoundCode(studyGroup.RoundCode);
+                if (startTime != null)
+                {
+                    criteria.StartTime = startTime.Date;
+                    criteria.EndTime = startTime.Date.AddHours(3);
+                }
+
                 response.Data = criteria;
                 //var center = await _context.TrainingCenters.Where(c => c.Id == center_ID).FirstOrDefaultAsync();
                 //var providersCenters = await _context.ProviderCenters.Where(c => c.CenterId == center_ID).Select(c => c.ProviderId).ToListAsync();
