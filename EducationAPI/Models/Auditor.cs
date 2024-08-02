@@ -39,6 +39,7 @@ public partial class Auditor
     public string? Password { get; set; }
 
     public string? CreatedBy { get; set; }
+    public int Role {  get; set; }
 
     public virtual ICollection<AuditingSession> AuditingSessions { get; set; } = new List<AuditingSession>();
 }

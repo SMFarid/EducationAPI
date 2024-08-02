@@ -1,5 +1,6 @@
 ﻿using EducationAPI.Context;
 using EducationAPI.Domain;
+using EducationAPI.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace EducationAPI.Repositories
 
         public async Task<IEnumerable<AuditorRoundCodeAssignment>> getAuditorAssignment(DateTime date)
         {
-            var result = await _context.AuditorRoundCodeAssignments.Where(c=> c.Date == date && c.Conducted!= null).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date
+            var result = await _context.AuditorRoundCodeAssignments.Where(c=> c.Date == date && c.Conducted!= (int)RoundCodeStates.Done).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date
 
             return result;
         }
@@ -35,7 +36,7 @@ namespace EducationAPI.Repositories
         {
             try
             {
-                var result = await _context.AuditorRoundCodeAssignments.Where(c => c.AuditorId == AuditorID).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date
+                var result = await _context.AuditorRoundCodeAssignments.Where(e => e.Conducted != (int)RoundCodeStates.Done).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date c => c.AuditorId == AuditorID
 
                 return result;
             } catch (Exception ex)
@@ -73,7 +74,7 @@ namespace EducationAPI.Repositories
             }
             catch (Exception ex)
             {
-                return ex.InnerException.ToString();
+                return ex.ToString();
             }
             return "Success";
         }

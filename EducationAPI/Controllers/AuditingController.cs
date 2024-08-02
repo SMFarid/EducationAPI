@@ -28,7 +28,7 @@ namespace EducationAPI.Controllers
 
         [HttpGet]
         [Route("GetAuditorGroups")]
-        public async Task<CommonResponse<List<AuditorGroupsDTO>>> GetAudtorGroups(int auditor_ID)
+        public async Task<CommonResponse<List<AuditorGroupsDTO>>> GetAuditorGroups(int auditor_ID)
         {
             return await auditingService.getAuditorGroups(auditor_ID, DateTime.Now);
         }
@@ -51,9 +51,9 @@ namespace EducationAPI.Controllers
 
         [HttpGet]
         [Route("GetAuditorsList")]
-        public async Task<CommonResponse<List<AuditorDTO>>> GetAuditorsList()
+        public async Task<CommonResponse<List<AuditorDTO>>> GetAuditorsList(int user_id)
         {
-            return await auditingService.getAuditorList();
+            return await auditingService.getAuditorList(user_id);
         }
 
         [HttpPost]

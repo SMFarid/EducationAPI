@@ -235,6 +235,8 @@ public partial class StudentDBContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("username");
+            entity.Property(e => e.Role).HasColumnName("Role");
+            entity.Property(e => e.Active).HasColumnName("Active");
         });
 
         modelBuilder.Entity<AuditorRoundCodeAssignment>(entity =>

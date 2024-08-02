@@ -20,10 +20,10 @@ namespace EducationAPI.Services
     public class AuditingService
     {
 
-        AuditorRoundCodeAssignmentRepository assignmentRepository = new AuditorRoundCodeAssignmentRepository();
-        StudyGroupRepository studyGroupRepository = new StudyGroupRepository();
-        AuditorRepository auditorRepository = new AuditorRepository();
-        AuditingSessionRepository auditingSessionRepository = new AuditingSessionRepository();
+        AuditorRoundCodeAssignmentRepository _assignmentRepository = new AuditorRoundCodeAssignmentRepository();
+        StudyGroupRepository _studyGroupRepository = new StudyGroupRepository();
+        AuditorRepository _auditorRepository = new AuditorRepository();
+        AuditingSessionRepository _auditingSessionRepository = new AuditingSessionRepository();
 
         #region Auditing Session
         public async Task<CommonResponse<AuditingSessionCriteraDTO>> getAuditingCritera(string roundCode, int Audtor_ID)
@@ -33,20 +33,22 @@ namespace EducationAPI.Services
 
             try
             {
-                var studyGroup = await studyGroupRepository.getStudyGroupByID(roundCode);
+                var studyGroup = await _studyGroupRepository.getStudyGroupByID(roundCode);
                 if (studyGroup == null)
                 {
                     response.Errors.Add(new Common.Error { Message = "Error: Round Code not found" });
                     return response;
                 }
 
-                var roundcodeAssignment = await assignmentRepository.getAssignmentByRoundCode(roundCode);
+                var roundcodeAssignment = await _assignmentRepository.getAssignmentByRoundCode(roundCode);
                 if (roundcodeAssignment == null)
                 {
                     response.Errors.Add(new Common.Error { Message = "Error: Round Code not found" });
                     return response;
                 }
 
+                roundcodeAssignment.AuditorId = Audtor_ID;
+                roundcodeAssignment.Conducted = (int)RoundCodeStates.InProgress;
                 var students = studyGroup.Trainees != null ? studyGroup.Trainees.ToList() : new List<Trainee>();
 
                 criteria.Students = students.Select(c => new StudentDTO { Id = c.TraineeIntId, NameAr = c.NameAr, NameEN = c.NameEn }).OrderBy(c=> c.NameAr).ToList();
@@ -64,12 +66,16 @@ namespace EducationAPI.Services
                 criteria.Study_Group_ID = studyGroup.GroupIntId;
                 criteria.Auditing_Session_ID = roundcodeAssignment.AssignmentSessionID;
                 criteria.MeetingLink = studyGroup.MeetingLink;
-                var startTime = await assignmentRepository.getAssignmentByRoundCode(studyGroup.RoundCode);
+                var startTime = roundcodeAssignment.Date;
+
                 if (startTime != null)
                 {
-                    criteria.StartTime = startTime.Date;
-                    criteria.EndTime = startTime.Date.AddHours(3);
+                    criteria.StartTime = startTime;
+                    criteria.EndTime = startTime.AddHours(3);
                 }
+
+
+                _assignmentRepository.Save();
 
                 response.Data = criteria;
                 //var center = await _context.TrainingCenters.Where(c => c.Id == center_ID).FirstOrDefaultAsync();
@@ -100,12 +106,12 @@ namespace EducationAPI.Services
             var response = new CommonResponse<List<AuditorGroupsDTO>>();
             List<AuditorGroupsDTO> auditorGroups = new List<AuditorGroupsDTO>();
             
-            var roundcodeList = await assignmentRepository.getAuditorAssignment(AuditorID, date); //edit to use only date and state
+            var roundcodeList = await _assignmentRepository.getAuditorAssignment(AuditorID, date); //edit to use only date and state
             foreach (var item in roundcodeList)
             {
                 auditorGroups.Add(new AuditorGroupsDTO
                 {
-                    Doneflag = (int)RoundCodeStates.Open,
+                    Doneflag = (int)(item.Conducted != null ? item.Conducted : (int)RoundCodeStates.Open),
                     RoundCode = item.StudyGroupRoundCode,
                     SessionDateTime = item.Date.ToShortTimeString()
                 });
@@ -115,20 +121,41 @@ namespace EducationAPI.Services
             return response;
         }
 
-        public async Task<CommonResponse<List<AuditorDTO>>> getAuditorList()
+        public async Task<CommonResponse<List<AuditorDTO>>> getAuditorList(int user_id)
         {
             var response = new CommonResponse<List<AuditorDTO>>();
             List<AuditorDTO> auditors = new List<AuditorDTO>();
 
-            var auditorsList = await auditorRepository.getAllAuditors();
-            foreach (var item in auditorsList)
+            var user = await _auditorRepository.GetAuditorById(user_id);
+            if (user == null)
             {
-                auditors.Add(new AuditorDTO
+                response.Errors.Add(new Error { Message = "Error: Auditor not found, please check ID" });
+                return response;
+            }
+
+            auditors.Add(
+                new AuditorDTO
                 {
-                    AuditorID = item.Id,
-                    NameAr = item.NameAr,
-                    NameEn = item.NameEn
+                    AuditorID = user.Id,
+                    NameAr = user.NameAr != null ? user.NameAr: "",
+                    NameEn = user.NameEn !=null ? user.NameEn: ""
                 });
+
+            if (user.Role == (int)UserRoles.Admin)
+            {
+                var auditorsList = await _auditorRepository.getAllAuditors();
+                foreach (var item in auditorsList)
+                {
+                    if (item.Id != user_id)
+                    {
+                        auditors.Add(new AuditorDTO
+                        {
+                            AuditorID = item.Id,
+                            NameAr = item.NameAr,
+                            NameEn = item.NameEn
+                        });
+                    }
+                }
             }
 
             response.Data = auditors;
@@ -141,21 +168,21 @@ namespace EducationAPI.Services
 
 
             //Retrieve and Validate
-            var auditor = await auditorRepository.GetAuditorById(model.AuditorId);
+            var auditor = await _auditorRepository.GetAuditorById(model.AuditorId);
             if (auditor == null)
             {
                 response.Errors.Add(new Error { Message = "Error: Auditor not found, please check ID" });
                 return response;
             }
-            var studyGroup = await studyGroupRepository.getStudyGroupByID(model.RoundCode);
+            var studyGroup = await _studyGroupRepository.getStudyGroupByID(model.RoundCode);
             if (studyGroup == null)
             {
                 response.Errors.Add(new Error { Message = "Error: Round Code not found" });
                 return response;
             }
             //get study group session
-            var assignedSession = await assignmentRepository.getAssignmentByID(model.Auditing_Session_ID);
-
+            var assignedSession = await _assignmentRepository.getAssignmentByID(model.Auditing_Session_ID);
+            assignedSession.Conducted = (int)RoundCodeStates.Done;
 
             AuditingSession auditingSession = new AuditingSession
             {
@@ -184,7 +211,8 @@ namespace EducationAPI.Services
                 
             };
 
-            response.Data = await auditingSessionRepository.SaveSession(auditingSession);
+            _assignmentRepository.Save();
+            response.Data = await _auditingSessionRepository.SaveSession(auditingSession);
 
             //
             return response;
@@ -210,7 +238,7 @@ namespace EducationAPI.Services
             var response = new CommonResponse<List<RoundCodeAssignmentDTO>>();
             List<RoundCodeAssignmentDTO> StudyGroups = new List<RoundCodeAssignmentDTO>();
 
-            var assignedCodes = await assignmentRepository.getAssignmentsByDate(DateTime.Now);
+            var assignedCodes = await _assignmentRepository.getAssignmentsByDate(DateTime.Now);
             
             if (assignedCodes != null)
             {
@@ -228,7 +256,7 @@ namespace EducationAPI.Services
                 }
             }
 
-            var roundCodesList = await studyGroupRepository.getAllGroups();
+            var roundCodesList = await _studyGroupRepository.getAllGroups();
 
             foreach (var code in roundCodesList)
             {
@@ -252,7 +280,7 @@ namespace EducationAPI.Services
         public async Task<CommonResponse<string>> EditAuditAssignment(EditAssignmentModel model)
         {
             var response = new CommonResponse<string>();
-            var roundCodeAssign = await assignmentRepository.getAssignmentByID(model.AssignmentID);
+            var roundCodeAssign = await _assignmentRepository.getAssignmentByID(model.AssignmentID);
 
             if (roundCodeAssign == null)
             {
@@ -264,7 +292,7 @@ namespace EducationAPI.Services
             roundCodeAssign.Conducted = model.Conducted;
             roundCodeAssign.Date = (DateTime)model.AssignmentDate;
 
-            response.Data = assignmentRepository.Save();
+            response.Data = _assignmentRepository.Save();
 
 
             return response;
@@ -273,7 +301,7 @@ namespace EducationAPI.Services
         public async Task<CommonResponse<string>> DeleteAuditAssignment(EditAssignmentModel model)
         {
             var response = new CommonResponse<string>();
-            var roundCodeAssign = await assignmentRepository.getAssignmentByRoundCode(model.RoundCode);
+            var roundCodeAssign = await _assignmentRepository.getAssignmentByRoundCode(model.RoundCode);
 
             if (roundCodeAssign == null)
             {
@@ -281,7 +309,7 @@ namespace EducationAPI.Services
                 return response;
             }
 
-            response.Data = assignmentRepository.DeleteAssignmentByRoundCode(roundCodeAssign);
+            response.Data = _assignmentRepository.DeleteAssignmentByRoundCode(roundCodeAssign);
 
 
             return response;
@@ -298,7 +326,7 @@ namespace EducationAPI.Services
                 StudyGroupRoundCode = model.RoundCode
             };
 
-            response.Data = assignmentRepository.Add(auditorRoundCode);
+            response.Data = _assignmentRepository.Add(auditorRoundCode);
 
 
             return response;
