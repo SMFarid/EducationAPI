@@ -60,6 +60,7 @@ public partial class StudyGroup
     public virtual TrackProvider? TrackInt { get; set; }
 
     public virtual Track? TrackIntNavigation { get; set; }
+    //public virtual ProviderStudyGroup? TrainingProvider {  get; set; }
     public List<Trainee>? Trainees { get; set; }
     //public virtual TrainingProvider trainingProvider { get; set; }
 }

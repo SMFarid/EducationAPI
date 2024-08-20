@@ -2,11 +2,13 @@
 using EducationAPI.Domain;
 using EducationAPI.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EducationAPI.Repositories
 {
@@ -27,7 +29,8 @@ namespace EducationAPI.Repositories
 
         public async Task<IEnumerable<AuditorRoundCodeAssignment>> getAssignmentsByDate(DateTime date)
         {
-            var result = await _context.AuditorRoundCodeAssignments.Where(c => c.Date.Date == date.Date).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date
+            //var 
+            var result = await _context.AuditorRoundCodeAssignments.Where(c =>c.Date.Date == date.Date).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date
 
             return result;
         }
@@ -36,7 +39,7 @@ namespace EducationAPI.Repositories
         {
             try
             {
-                var result = await _context.AuditorRoundCodeAssignments.Where(e => e.Conducted != (int)RoundCodeStates.Done).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date c => c.AuditorId == AuditorID
+                var result = await _context.AuditorRoundCodeAssignments.Where(e => e.Conducted != (int)RoundCodeStates.Done && e.Date.Date == date.Date).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date c => c.AuditorId == AuditorID
 
                 return result;
             } catch (Exception ex)
@@ -48,7 +51,7 @@ namespace EducationAPI.Repositories
 
         public async Task<AuditorRoundCodeAssignment> getAssignmentByRoundCode(string roundCode)
         {
-            var result = await _context.AuditorRoundCodeAssignments.Where(c => c.StudyGroupRoundCode == roundCode).FirstOrDefaultAsync();
+            var result = await _context.AuditorRoundCodeAssignments.Where(c => c.StudyGroupRoundCode == roundCode && c.Date.Date == DateTime.Now.Date).FirstOrDefaultAsync();
 
             return result;
         }

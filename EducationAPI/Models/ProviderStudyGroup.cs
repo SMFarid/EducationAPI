@@ -13,7 +13,9 @@ public partial class ProviderStudyGroup
 
     public decimal? YearSemester { get; set; }
 
-    public virtual TrainingProvider? Provider { get; set; }
+    public string ProviderName { get; set; }
+    public string RoundCode { get; set; }
 
-    //public virtual StudyGroup? StudyGroupInt { get; set; }
+    public virtual TrainingProvider? Provider { get; set; }
+    //public virtual StudyGroup? StudyGroup { get; set; }
 }

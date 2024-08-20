@@ -5,6 +5,7 @@ using EducationAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -42,11 +43,29 @@ namespace EducationAPI.Controllers
             return result;
         }
 
+        // POST api/<AuditingController>
+        [HttpPost]
+        [Route("HoldAuditingReport")]
+        public async Task<CommonResponse<string>> HoldAudit(AuditSessionSaveModel model)
+        {
+            var result = await auditingService.HoldAuditSession(model);
+            return result;
+        }
+
         [HttpGet]
         [Route("GetRoundCodesForEdit")]
         public async Task<CommonResponse<List<RoundCodeAssignmentDTO>>> GetRoundCodesForEdit()
         {
-            return await auditingService.getRoundCodes();
+            CommonResponse <List<RoundCodeAssignmentDTO>> result = new CommonResponse<List<RoundCodeAssignmentDTO>> ();
+            try
+            {
+                result = await auditingService.getRoundCodes();
+            }
+            catch (Exception ex)
+            {
+                result.Errors.Add(new Error { Message = ex.Message });
+            }
+            return result;
         }
 
         [HttpGet]

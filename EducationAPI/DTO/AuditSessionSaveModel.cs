@@ -23,5 +23,16 @@
         public string ConnectionQuality { get; set; }
         public string VoiceQuality {  get; set; }
         public string VideoQuality { get; set; }
+
+        public string? HardwareProficiency { get; set; }
+        public bool? UnderstoodExamples { get; set; }
+        public bool? UnderstoonExplaination { get; set; }
+        public bool? TimeForQuestions { get; set; }
+        public bool? InstructorEncouragement { get; set; }
+        public bool? MaterialIsClear { get; set; }
+        public string? ACCondition { get; set; }
+        public bool? CenterEnvironment { get; set; }
+        public bool? InitiativeClear { get; set; }
+        public bool? PrevLinks { get; set; }
     }
 }

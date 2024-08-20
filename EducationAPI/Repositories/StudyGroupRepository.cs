@@ -25,6 +25,7 @@ namespace EducationAPI.Repositories
             var result = await _context.StudyGroups.Where(c => c.RoundCode == ID)
                 .Include(c => c.Instructor)
                 .Include(c => c.Trainees)
+                //.Include(c=> c.TrainingProvider)
                 //.Include(c => c.TrackIntNavigation)
                 .FirstOrDefaultAsync();
             //var result = await _context.StudyGroups.ToListAsync();

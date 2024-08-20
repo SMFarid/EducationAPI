@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using EducationAPI.Domain;
 using EducationAPI.Models;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,19 @@ public partial class StudentDBContext : DbContext
 {
     public StudentDBContext()
     {
+        //context.Database.Log = s => System.Diagnostics.Debug.WriteLine(s);
+        //_logStream.Close();
+        //Database.Log = sql => Debug.Write(sql);
+        //_logStream.Close();
     }
+
+    //private readonly StreamWriter _logStream = new StreamWriter("mylog.txt", append: true);
+    //public void CreateFile(string filename)
+    //{
+    //    var myFile = File.Create(myPath); //create file
+    //                                      //some other operations here like writing into the text file
+    //    myFile.Close(); //close text file
+    //}
 
     public StudentDBContext(DbContextOptions<StudentDBContext> options)
         : base(options)
@@ -71,14 +84,40 @@ public partial class StudentDBContext : DbContext
 
     public virtual DbSet<University> Universities { get; set; }
 
+    public static readonly Microsoft.Extensions.Logging.LoggerFactory _myLoggerFactory =
+    new LoggerFactory(new[] {
+        new Microsoft.Extensions.Logging.Debug.DebugLoggerProvider()
+    });
 
+
+    //private readonly StreamWriter _logStream = new StreamWriter("mylog.txt", append: true);
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    { 
+        
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         //=> optionsBuilder.UseSqlServer("Server=CALIBARN;Database=DEPI2;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;User ID=sherin;Password=P@ssw0rd"
         //=> optionsBuilder.UseSqlServer("Server=DESKTOP-GBPLSPS;Database=DEPI2;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;User ID=sherin;Password=P@ssw0rd"
         => optionsBuilder.UseSqlServer("Server=DEPI-DB;Database=DEPI;Trusted_Connection=False;Encrypt=False;TrustServerCertificate=True;Integrated Security=False;User ID=depiDBUser;Password=P@ssw0rd"
-            , options => options.EnableRetryOnFailure());
-        
+        //=> optionsBuilder.UseSqlServer("DATA SOURCE=10.0.27.100:1433/DEPI-DB;Database=DEPI;Trusted_Connection=False;Encrypt=False;TrustServerCertificate=True;Integrated Security=False;User ID=depiDBUser;Password=P@ssw0rd"
+            , options => options.EnableRetryOnFailure())
+        .EnableSensitiveDataLogging()
+        .UseLoggerFactory(_myLoggerFactory);
+        //.LogTo(_logStream.WriteLine);
+    }
+
+    //public override void Dispose()
+    //{
+    //    base.Dispose();
+    //    _logStream.Dispose();
+    //}
+
+    //public override async ValueTask DisposeAsync()
+    //{
+    //    await base.DisposeAsync();
+    //    await _logStream.DisposeAsync();
+    //}
+
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -184,6 +223,55 @@ public partial class StudentDBContext : DbContext
             .IsUnicode(false)
             .HasColumnName("Presentation_Used");
 
+            //new added 18/08/2024
+            entity.Property(e => e.HardwareProficiency)
+                .HasMaxLength(50)
+                .HasColumnName("Hardware_Proficiency");
+
+            entity.Property(e => e.UnderstoodExamples)
+                .HasMaxLength(1)
+                .IsUnicode(false)
+                .HasColumnName("Understood_Examples");
+
+            entity.Property(e => e.UnderstoonExplaination)
+                .HasMaxLength(1)
+                .IsUnicode(false)
+                .HasColumnName("Understood_Explaination");
+
+            entity.Property(e => e.TimeForQuestions)
+                .HasMaxLength(1)
+                .IsUnicode(false)
+                .HasColumnName("Time_For_Questions");
+
+            entity.Property(e => e.InstructorEncouragement)
+                .HasMaxLength(1)
+                .IsUnicode(false)
+                .HasColumnName("Instructor_Encouragement");
+
+            entity.Property(e => e.MaterialIsClear)
+               .HasMaxLength(1)
+               .IsUnicode(false)
+               .HasColumnName("Material_Is_Clear");
+
+            entity.Property(e => e.ACCondition)
+                .HasMaxLength(50)
+                .HasColumnName("AC_Condition");
+
+            entity.Property(e => e.CenterEnvironment)
+               .HasMaxLength(1)
+               .IsUnicode(false)
+               .HasColumnName("Center_Environment");
+
+            entity.Property(e => e.InitiativeClear)
+               .HasMaxLength(1)
+               .IsUnicode(false)
+               .HasColumnName("Initiative_Clear");
+
+            entity.Property(e => e.PrevLinks)
+               .HasMaxLength(1)
+               .IsUnicode(false)
+               .HasColumnName("Prev_links");
+
             entity.HasOne(d => d.Auditor).WithMany(p => p.AuditingSessions)
                 .HasForeignKey(d => d.AuditorId)
                 .HasConstraintName("FK_Auditing_Session_Auditor");
@@ -196,9 +284,33 @@ public partial class StudentDBContext : DbContext
                 .HasForeignKey(d => d.InstructorId)
                 .HasConstraintName("FK_Auditing_Session_Instructor");
 
+            //entity.HasMany(e => e.AuditingSessionAttendances).WithOne()
+            //.HasForeignKey(e => e.SessionId);
+
+            //.HasConstraintName("FK_Auditing_Session_Attendance_Auditing_Session");
+
             //entity.HasOne(d => d.Provider).WithMany(p => p.AuditingSessions)
             //    .HasForeignKey(d => d.ProviderId)
             //    .HasConstraintName("FK_Auditing_Session_Training_Provider");
+        });
+
+        modelBuilder.Entity<AuditingSessionAttendance>(entity =>
+        {
+            entity
+                //.HasNoKey()
+                .ToTable("Auditing_Session_Attendance");
+
+            entity.HasKey(e => new { e.SessionId, e.StudentId, e.StudentName }); //, "PK_Auditing_Session_Attendance"
+
+            entity.Property(e => e.SessionId).HasColumnName("Session_ID");
+            entity.Property(e => e.StudentId).HasColumnName("Student_ID");
+            entity.Property(e => e.StudentName)
+                .HasMaxLength(100)
+                .HasColumnName("Student_Name");
+
+            entity.HasOne(e => e.auditingSession).WithMany(e => e.AuditingSessionAttendances)
+            .HasPrincipalKey(e => e.SessionId)
+            .HasConstraintName("FK_Auditing_Session_Attendance_Auditing_Session");
         });
 
         modelBuilder.Entity<Auditor>(entity =>
@@ -618,11 +730,13 @@ public partial class StudentDBContext : DbContext
                 .ToTable("Provider_Study_Group");
 
             entity.Property(e => e.ProviderId).HasColumnName("Provider_ID");
-            entity.Property(e => e.Remarks).HasMaxLength(100);
+            entity.Property(e => e.Remarks).HasMaxLength(100).HasColumnName("Remarks");
             entity.Property(e => e.StudyGroupIntId).HasColumnName("Study_Group_Int_ID");
             entity.Property(e => e.YearSemester)
                 .HasColumnType("numeric(18, 0)")
                 .HasColumnName("Year_Semester");
+            entity.Property(e => e.ProviderName).HasMaxLength(50).HasColumnName("Provider_Name");
+            entity.Property(e => e.RoundCode).HasMaxLength(50).HasColumnName("Round_Code");
 
             entity.HasOne(d => d.Provider).WithMany()
                 .HasForeignKey(d => d.ProviderId)
@@ -745,6 +859,10 @@ public partial class StudentDBContext : DbContext
             entity.HasMany(d => d.Trainees)
             .WithOne(d => d.StudyGroup)
             .HasForeignKey(d => d.GroupIntID);
+
+            //entity.HasOne(d => d.TrainingProvider).WithMany()
+            //    .HasPrincipalKey(d => d.StudyGroupIntId);
+            //    //.HasConstraintName("FK_Provider_Study_Group_Study_Group");
         });
 
         modelBuilder.Entity<StudyGroupDay>(entity =>

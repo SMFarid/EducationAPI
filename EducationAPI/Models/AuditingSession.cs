@@ -6,6 +6,11 @@ namespace EducationAPI.Models;
 
 public partial class AuditingSession
 {
+    public AuditingSession()
+    {
+        AuditingSessionAttendances = new List<AuditingSessionAttendance>();
+    }
+
     public int SessionId { get; set; }
 
     public int AuditorId { get; set; }
@@ -76,6 +81,17 @@ public partial class AuditingSession
 
     public bool? PresentationUsed { get; set; }
 
+    public string? HardwareProficiency { get; set; }
+    public bool? UnderstoodExamples {  get; set; }
+    public bool? UnderstoonExplaination { get; set; }
+    public bool? TimeForQuestions { get; set; }
+    public bool? InstructorEncouragement { get; set; }
+    public bool? MaterialIsClear {  get; set; }
+    public string? ACCondition { get; set; }
+    public bool? CenterEnvironment { get; set; }
+    public bool? InitiativeClear { get; set; }
+    public bool? PrevLinks {  get; set; }
+
     public virtual Auditor Auditor { get; set; } = null!;
 
     public virtual TrainingCenter? Center { get; set; }
@@ -83,4 +99,6 @@ public partial class AuditingSession
     public virtual Instructor? Instructor { get; set; }
 
     public virtual TrainingProvider? Provider { get; set; }
+
+    public virtual ICollection<AuditingSessionAttendance>? AuditingSessionAttendances { get; set; }
 }

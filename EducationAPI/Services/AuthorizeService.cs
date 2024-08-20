@@ -29,7 +29,8 @@ namespace EducationAPI.Services
                     username = auditor.Username,
                     password = auditor.Password,
                     email = auditor.Email,
-                    AuditorID = auditor.Id
+                    AuditorID = auditor.Id,
+                    Role = auditor.Role
                 };
                 res.Data = userLoginModel;
             } catch (Exception ex)
