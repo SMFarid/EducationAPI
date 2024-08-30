@@ -1,0 +1,44 @@
+﻿using EducationAPI.Context;
+using EducationAPI.Domain;
+using EducationAPI.DTO;
+using EducationAPI.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace EducationAPI.Repositories
+{
+    public class StudentRepository
+    {
+        StudentDBContext _context;
+        public StudentRepository() {
+            _context = new StudentDBContext();
+        }
+
+        public async Task<Trainee> getStudentByIntID(int studentID)
+        {
+            var result = await _context.Trainees.Where(e=> e.TraineeIntId == studentID).FirstOrDefaultAsync();
+            return result;
+        }
+
+        public async Task<IEnumerable<Trainee>> getAllStudent()
+        {
+            var result = await _context.Trainees.ToListAsync();
+            return result;
+        }
+
+        public async Task<string> Save()
+        {
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            return "success";
+        }
+
+    }
+}

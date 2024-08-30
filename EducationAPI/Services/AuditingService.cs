@@ -17,7 +17,7 @@ using Error = EducationAPI.Common.Error;
 
 namespace EducationAPI.Services
 {
-    public class AuditingService
+    public class AuditingtService
     {
 
         AuditorRoundCodeAssignmentRepository _assignmentRepository = new AuditorRoundCodeAssignmentRepository();

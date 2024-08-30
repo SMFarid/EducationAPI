@@ -20,7 +20,15 @@ namespace EducationAPI.Repositories
             return result;
         }
 
-        public async Task<StudyGroup> getStudyGroupByID (string ID)
+        public async Task<StudyGroup> getStudyGroupByIntID (int ID)
+        {
+            var result = await _context.StudyGroups.Where(c => c.GroupIntId == ID)
+                .FirstOrDefaultAsync();
+
+            return result;
+        }
+
+        public async Task<StudyGroup> getStudyGroupByID(string ID)
         {
             var result = await _context.StudyGroups.Where(c => c.RoundCode == ID)
                 .Include(c => c.Instructor)
@@ -56,6 +64,17 @@ namespace EducationAPI.Repositories
             auditingSession.NumberRegistered = (int)result.NumberOfStudents;
             auditingSession.Students = temp.Select(c => new StudentDTO { Id = c.TraineeIntId, NameAr = c.NameAr, NameEN = c.NameEn }).ToList();
             return auditingSession;
+        }
+
+        public async Task<string> Save()
+        {
+            try
+            {
+               await _context.SaveChangesAsync();
+            } catch (Exception ex){
+                return ex.Message;
+            }
+            return "Success!";
         }
 
     }

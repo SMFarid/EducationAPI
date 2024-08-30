@@ -17,7 +17,7 @@ namespace EducationAPI.Controllers
     //[Authorize]
     public class AuditingController : ControllerBase
     {
-        AuditingService auditingService = new AuditingService();
+        AuditingtService auditingService = new AuditingtService();
         // GET: api/<AuditingController>
         [HttpGet]
         
