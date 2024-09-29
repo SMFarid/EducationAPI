@@ -23,7 +23,7 @@ namespace EducationAPI.Services
 
         AuditorRoundCodeAssignmentRepository _assignmentRepository = new AuditorRoundCodeAssignmentRepository();
         StudyGroupRepository _studyGroupRepository = new StudyGroupRepository();
-        AuditorRepository _auditorRepository = new AuditorRepository();
+        //AuditorRepository _auditorRepository = new AuditorRepository();
         AuthRepository _authRepository = new AuthRepository();
         AuditingSessionRepository _auditingSessionRepository = new AuditingSessionRepository();
         ProviderStudyGroupRepository _providerStudyGroupRepository = new ProviderStudyGroupRepository();
@@ -332,7 +332,7 @@ namespace EducationAPI.Services
                 response.Errors.Add(new Error { Message = "Error: Auditing Session not found!" });
                 return response;
             }
-            var auditor = await _auditorRepository.GetAuditorById(model.AuditorId);
+            var auditor = await _authRepository.GetAuditorById(model.AuditorId);
             if (auditor == null)
             {
                 response.Errors.Add(new Error { Message = "Error: Auditor not found, please check ID" });
@@ -354,7 +354,7 @@ namespace EducationAPI.Services
             auditingSession.AttendanceType = assignedSession.SessionType; //change later
                                                                           //Auditor = auditor,
             auditingSession.AuditorId = model.AuditorId;
-            auditingSession.AuditorName = !auditor.NameEn.IsNullOrEmpty() ? auditor.NameEn : auditor.NameAr;
+            auditingSession.AuditorName = !auditor.Username.IsNullOrEmpty() ? auditor.Username : "";
 
             //Course = studyGroup.CourseId, //retrieve name later
             //Instructor = studyGroup.Instructor,
