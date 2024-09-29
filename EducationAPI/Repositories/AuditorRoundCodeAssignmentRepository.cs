@@ -39,7 +39,10 @@ namespace EducationAPI.Repositories
         {
             try
             {
-                var result = await _context.AuditorRoundCodeAssignments.Where(e => e.Conducted != (int)RoundCodeStates.Done && e.Date.Date == date.Date).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date c => c.AuditorId == AuditorID
+                var result = await _context.AuditorRoundCodeAssignments.Where(e => e.Conducted != (int)RoundCodeStates.Done 
+                && e.Date.Date == date.Date
+                && e.AuditorId == AuditorID)
+                    .ToListAsync();
 
                 return result;
             } catch (Exception ex)
@@ -51,7 +54,10 @@ namespace EducationAPI.Repositories
 
         public async Task<AuditorRoundCodeAssignment> getAssignmentByRoundCode(string roundCode)
         {
-            var result = await _context.AuditorRoundCodeAssignments.Where(c => c.StudyGroupRoundCode == roundCode && c.Date.Date == DateTime.Now.Date).FirstOrDefaultAsync();
+            var result = await _context.AuditorRoundCodeAssignments
+                .Where(c => c.StudyGroupRoundCode == roundCode && c.Date.Date == DateTime.Now.Date)
+                //.Include(c => c.auditingSession)
+                .FirstOrDefaultAsync();
 
             return result;
         }

@@ -168,7 +168,7 @@ namespace EducationAPI.Services
 
             if (studyGroup == null)
             {
-                result.Errors.Add(new Error { Message = "Group with ID: " + groupIntID + " not found!" });
+                result.Errors.Add(new Error { Message = "VIEW: Group with ID: " + groupIntID + " not found!" });
                 return result;
             }
 
@@ -219,57 +219,57 @@ namespace EducationAPI.Services
 
             if (studyGroup == null)
             {
-                result.Errors.Add(new Error { Message = "Group with ID: " + model.GroupIntId + " not found!" });
+                result.Errors.Add(new Error { Message = "EDIT: Group with ID: " + model.GroupIntId + " not found!" });
                 return result;
             }
 
 
 
-            if (string.IsNullOrEmpty(model.RoundCode))
+            if (!string.IsNullOrEmpty(model.RoundCode))
                 studyGroup.RoundCode = model.RoundCode;
 
             if (model.Capacity != null)
                 studyGroup.Capacity = model.Capacity;
-            if (string.IsNullOrEmpty(model.ExpectedEndTime))
+            if (!string.IsNullOrEmpty(model.ExpectedEndTime))
                 studyGroup.ExpectedEndTime = model.ExpectedEndTime;
-            if (string.IsNullOrEmpty(model.Governorate))
+            if (!string.IsNullOrEmpty(model.Governorate))
                 studyGroup.Governorate = model.Governorate;
-            if (string.IsNullOrEmpty(model.GroupStartTime))
+            if (!string.IsNullOrEmpty(model.GroupStartTime))
                 studyGroup.GroupStartTime = model.GroupStartTime;
             if (model.InstructorId != null && model.InstructorId != 0)
                 studyGroup.InstructorId = model.InstructorId;
-            if (string.IsNullOrEmpty(model.InstructorName))
+            if (!string.IsNullOrEmpty(model.InstructorName))
                 studyGroup.InstructorName = model.InstructorName;
             if (model.JobProfileIntId != null)
                 studyGroup.JobProfileIntId = model.JobProfileIntId;
-            if (string.IsNullOrEmpty(model.LocationAddress))
+            if (!string.IsNullOrEmpty(model.LocationAddress))
                 studyGroup.LocationAddress = model.LocationAddress;
-            if (string.IsNullOrEmpty(model.LocationGoogleMap))
+            if (!string.IsNullOrEmpty(model.LocationGoogleMap))
                 studyGroup.LocationGoogleMap = model.LocationGoogleMap;
-            if (string.IsNullOrEmpty(model.MeetingLink))
+            if (!string.IsNullOrEmpty(model.MeetingLink))
                 studyGroup.MeetingLink = model.MeetingLink;
-            if (string.IsNullOrEmpty(model.MeetingLinkId))
+            if (!string.IsNullOrEmpty(model.MeetingLinkId))
                 studyGroup.MeetingLinkId = model.MeetingLinkId;
-            if (string.IsNullOrEmpty(model.MeetingLinkPasscode))
+            if (!string.IsNullOrEmpty(model.MeetingLinkPasscode))
                 studyGroup.MeetingLinkPasscode = model.MeetingLinkPasscode;
             if (model.NumberOfStudents != null)
                 studyGroup.NumberOfStudents = model.NumberOfStudents;
-            if (string.IsNullOrEmpty(model.StudyGroupType))
+            if (!string.IsNullOrEmpty(model.StudyGroupType))
                 studyGroup.StudyGroupType = model.StudyGroupType;
-            if (string.IsNullOrEmpty(model.TrackCode))
+            if (!string.IsNullOrEmpty(model.TrackCode))
                 studyGroup.TrackCode = model.TrackCode;
             if (model.TrackIntId != null)
                 studyGroup.TrackIntId = model.TrackIntId;
-            if (string.IsNullOrEmpty(model.TraineeType))
+            if (!string.IsNullOrEmpty(model.TraineeType))
                 studyGroup.TraineeType = model.TraineeType;
-            if (string.IsNullOrEmpty(model.WeekDayEndFlag))
+            if (!string.IsNullOrEmpty(model.WeekDayEndFlag))
                 studyGroup.WeekDayEndFlag = model.WeekDayEndFlag;
             if (model.WelcomeMessage != null)
                 studyGroup.WelcomeMessage = model.WelcomeMessage;
-            if (string.IsNullOrEmpty(model.YearSemester))
+            if (!string.IsNullOrEmpty(model.YearSemester))
                 studyGroup.YearSemester = model.YearSemester;
 
-            _studyGroupRepository.Save();
+            await _studyGroupRepository.Save();
 
             result = await GetGroupDetails(model.GroupIntId);
 

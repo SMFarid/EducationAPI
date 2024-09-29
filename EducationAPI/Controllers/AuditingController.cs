@@ -76,6 +76,13 @@ namespace EducationAPI.Controllers
         }
 
         [HttpPost]
+        [Route("AutoAssignAuditors")]
+        public async Task<CommonResponse<string>> AutoAssignAuditors(List<AuditorAttendanceDTO> auditorList)
+        {
+            return await auditingService.assignAuditors(auditorList);
+        }
+
+        [HttpPost]
         [Route("EditRoundCodeAssignment")]
         public async Task<CommonResponse<string>> EditRoundCodeAssignment(EditAssignmentModel model)
         {

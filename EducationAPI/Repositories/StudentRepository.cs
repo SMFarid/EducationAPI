@@ -27,6 +27,12 @@ namespace EducationAPI.Repositories
             return result;
         }
 
+        public async Task<IEnumerable<Trainee>> getListOfStudents(List<int> IDs)
+        {
+            var result = await _context.Trainees.Where(d=> IDs.Contains(d.TraineeIntId)).ToListAsync();
+            return result;
+        }
+
         public async Task<string> Save()
         {
             try

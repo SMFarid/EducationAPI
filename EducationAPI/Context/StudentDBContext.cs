@@ -84,6 +84,11 @@ public partial class StudentDBContext : DbContext
 
     public virtual DbSet<University> Universities { get; set; }
 
+    public virtual DbSet<Auth> Auths { get; set; }
+    public virtual DbSet<DailyAuditorsAttendance> DailyAuditorsAttendances { get; set; }
+    public virtual DbSet<Role> Roles { get; set; }
+    public virtual DbSet<UserProfile> UserProfiles { get; set; }
+
     public static readonly Microsoft.Extensions.Logging.LoggerFactory _myLoggerFactory =
     new LoggerFactory(new[] {
         new Microsoft.Extensions.Logging.Debug.DebugLoggerProvider()
@@ -95,12 +100,13 @@ public partial class StudentDBContext : DbContext
     { 
         
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        //=> optionsBuilder.UseSqlServer("Server=CALIBARN;Database=DEPI2;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;User ID=sherin;Password=P@ssw0rd"
+        => optionsBuilder.UseSqlServer("Server=CALIBARN;Database=DEPI2;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;User ID=sherin;Password=P@ssw0rd"
         //=> optionsBuilder.UseSqlServer("Server=DESKTOP-GBPLSPS;Database=DEPI2;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;User ID=sherin;Password=P@ssw0rd"
-        => optionsBuilder.UseSqlServer("Server=DEPI-DB;Database=DEPI;Trusted_Connection=False;Encrypt=False;TrustServerCertificate=True;Integrated Security=False;User ID=depiDBUser;Password=P@ssw0rd"
-        //=> optionsBuilder.UseSqlServer("DATA SOURCE=10.0.27.100:1433/DEPI-DB;Database=DEPI;Trusted_Connection=False;Encrypt=False;TrustServerCertificate=True;Integrated Security=False;User ID=depiDBUser;Password=P@ssw0rd"
+        //=> optionsBuilder.UseSqlServer("Server=DEPI-DB;Database=DEPI;Trusted_Connection=False;Encrypt=False;TrustServerCertificate=True;Integrated Security=False;User ID=depiDBUser;Password=P@ssw0rd"
+        ////=> optionsBuilder.UseSqlServer("DATA SOURCE=10.0.27.100:1433/DEPI-DB;Database=DEPI;Trusted_Connection=False;Encrypt=False;TrustServerCertificate=True;Integrated Security=False;User ID=depiDBUser;Password=P@ssw0rd"
             , options => options.EnableRetryOnFailure())
         .EnableSensitiveDataLogging()
+        .EnableDetailedErrors()
         .UseLoggerFactory(_myLoggerFactory);
         //.LogTo(_logStream.WriteLine);
     }
@@ -272,6 +278,21 @@ public partial class StudentDBContext : DbContext
                .IsUnicode(false)
                .HasColumnName("Prev_links");
 
+            //Added 27-09-2024
+            entity.Property(e => e.CommentCategory)
+                .HasMaxLength(50)
+                .HasColumnName("Comment_Category");
+            entity.Property(e => e.AssignmentSessionID).HasColumnName("Assignment_Session_ID");
+            entity.Property(e => e.Remarks)
+                .HasMaxLength(500)
+                .HasColumnName("Remarks");
+
+
+            ///Relations->
+            ///
+            //entity.HasOne(d => d.auditorRoundCodeAssignment).WithMany()
+            //    .HasForeignKey(e =>e.);
+
             entity.HasOne(d => d.Auditor).WithMany(p => p.AuditingSessions)
                 .HasForeignKey(d => d.AuditorId)
                 .HasConstraintName("FK_Auditing_Session_Auditor");
@@ -307,6 +328,7 @@ public partial class StudentDBContext : DbContext
             entity.Property(e => e.StudentName)
                 .HasMaxLength(100)
                 .HasColumnName("Student_Name");
+            entity.Property(e => e.SendDate).HasColumnType("datetime").HasColumnName("SendDate");
 
             entity.HasOne(e => e.auditingSession).WithMany(e => e.AuditingSessionAttendances)
             .HasPrincipalKey(e => e.SessionId)
@@ -361,6 +383,15 @@ public partial class StudentDBContext : DbContext
             entity.Property(e => e.StudyGroupRoundCode)
                 .HasMaxLength(50)
                 .HasColumnName("Study_Group_Round_Code");
+
+            entity.Property(e => e.SessionType)
+                .HasMaxLength(50)
+                .HasColumnName("SessionType");
+
+            entity.Property(e => e.GroupIntID).HasColumnName("Group_Int_ID");
+
+            entity.HasOne(d => d.auditingSession).WithMany()
+                .HasForeignKey(e => e.AssignmentSessionID);
 
             entity.HasOne(d => d.Auditor).WithMany()
                 .HasForeignKey(d => d.AuditorId)
@@ -1147,6 +1178,100 @@ public partial class StudentDBContext : DbContext
             entity.Property(e => e.Type)
                 .HasMaxLength(50)
                 .IsFixedLength();
+        });
+
+        modelBuilder.Entity<Auth>(entity =>
+        {
+            entity.ToTable("Auth");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Active)
+                .HasDefaultValue(true)
+                .HasColumnName("active");
+            entity.Property(e => e.CreationDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnName("creation_date");
+            entity.Property(e => e.PasswordHash)
+                .HasMaxLength(100)
+                .HasColumnName("password_hash");
+            entity.Property(e => e.Role)
+                .HasDefaultValueSql("(NULL)")
+                .HasColumnName("role");
+            entity.Property(e => e.Username)
+                .HasMaxLength(100)
+                .HasColumnName("username");
+
+            entity.HasOne(d => d.RoleNavigation).WithMany(p => p.Auths)
+                .HasForeignKey(d => d.Role)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Auth_roles");
+        });
+
+        modelBuilder.Entity<DailyAuditorsAttendance>(entity =>
+        {
+            entity.ToTable("daily_auditors_attendance");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.AuditorId).HasColumnName("auditor_id");
+            entity.Property(e => e.LoginTime)
+                .HasColumnType("datetime")
+                .HasColumnName("login_time");
+
+            entity.HasOne(d => d.Auditor).WithMany(p => p.DailyAuditorsAttendances)
+                .HasForeignKey(d => d.AuditorId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_daily_auditors_attendance_Auth");
+        });
+
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.ToTable("roles");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Role1).HasColumnName("role");
+            entity.Property(e => e.RoleName)
+                .HasMaxLength(50)
+                .HasColumnName("role_name");
+        });
+
+        modelBuilder.Entity<UserProfile>(entity =>
+        {
+            entity.ToTable("user_profile");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Adress)
+                .HasMaxLength(100)
+                .HasColumnName("adress");
+            entity.Property(e => e.Facebook)
+                .HasMaxLength(500)
+                .HasColumnName("facebook");
+            entity.Property(e => e.FirstName)
+                .HasMaxLength(100)
+                .HasColumnName("first_name");
+            entity.Property(e => e.Idnumber)
+                .HasMaxLength(100)
+                .HasColumnName("idnumber");
+            entity.Property(e => e.LastName)
+                .HasMaxLength(100)
+                .HasColumnName("last_name");
+            entity.Property(e => e.Linkedin)
+                .HasMaxLength(500)
+                .HasColumnName("linkedin");
+            entity.Property(e => e.PhoneNumber)
+                .HasMaxLength(50)
+                .HasColumnName("phone_number");
+            entity.Property(e => e.PicName)
+                .HasMaxLength(100)
+                .HasColumnName("pic_name");
+            entity.Property(e => e.PicPath)
+                .HasMaxLength(100)
+                .HasColumnName("pic_path");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserProfiles)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_user_profile_Auth");
         });
 
         OnModelCreatingPartial(modelBuilder);

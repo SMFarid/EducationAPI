@@ -7,5 +7,6 @@
         public int? AuditorID { get; set; }
         public DateTime AssignmentDate { get; set; }
         public int Conducted {  get; set; }
+        public string SessionType { get; set; }
     }
 }

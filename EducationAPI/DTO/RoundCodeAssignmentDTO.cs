@@ -9,5 +9,8 @@
         public DateTime? AssignmentDate { get; set; }
         public int? Conducted {  get; set; }
         public string? StatusName { get; set; }
+        public int? GroupIntID { get; set; }
+        public string? SessionType { get; set; }
+        public string? TrainingProvider { get; set; }
     }
 }

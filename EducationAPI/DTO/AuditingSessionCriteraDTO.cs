@@ -21,5 +21,7 @@
         public int NumberRegistered { get; set; }
         public int Study_Group_ID { get; set; }
         public string? MeetingLink { get; set; }
+        public int? SessionID { get; set; }
+        public DateTime? SessionStartTime { get; set; }
     }
 }

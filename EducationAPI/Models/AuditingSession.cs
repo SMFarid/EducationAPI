@@ -91,6 +91,11 @@ public partial class AuditingSession
     public bool? CenterEnvironment { get; set; }
     public bool? InitiativeClear { get; set; }
     public bool? PrevLinks {  get; set; }
+    public string? CommentCategory { get; set; }
+    public int? AssignmentSessionID { get; set; }
+    public string? Remarks { get; set; }
+
+    //public virtual AuditorRoundCodeAssignment auditorRoundCodeAssignment { get; set; }
 
     public virtual Auditor Auditor { get; set; } = null!;
 

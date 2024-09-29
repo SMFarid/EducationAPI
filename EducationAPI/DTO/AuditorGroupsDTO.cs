@@ -4,6 +4,9 @@
     {
         public string RoundCode {  get; set; }
         public string SessionDateTime { get; set; }
-        public int Doneflag {  get; set; }    
+        public int Doneflag {  get; set; }  
+        public int GroupIntID { get; set; }
+        public string SessionType { get; set; }
+        public string TrainingProvider { get; set; }
     }
 }

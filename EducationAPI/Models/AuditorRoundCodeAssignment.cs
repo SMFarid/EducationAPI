@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EducationAPI.Models;
+using System;
 using System.Collections.Generic;
 
 namespace EducationAPI.Domain;
@@ -14,6 +15,9 @@ public partial class AuditorRoundCodeAssignment
     public int Conducted { get; set; }
 
     public int AssignmentSessionID { get; set; }
+    public string? SessionType { get; set; }
+    public int? GroupIntID { get; set; }
 
     public virtual Auditor Auditor { get; set; } = null!;
+    public virtual AuditingSession auditingSession { get; set; }
 }

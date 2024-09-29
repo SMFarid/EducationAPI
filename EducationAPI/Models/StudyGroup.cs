@@ -5,6 +5,11 @@ namespace EducationAPI.Domain;
 
 public partial class StudyGroup
 {
+    public StudyGroup() {
+        GroupSessions = new List<GroupSession>();
+        StudyGroupSessions = new List<StudyGroupSession>();
+
+    }
     public string RoundCode { get; set; }
 
     public int? TrackIntId { get; set; }
@@ -49,7 +54,7 @@ public partial class StudyGroup
 
     public string? WeekDayEndFlag { get; set; }
 
-    public virtual ICollection<GroupSession> GroupSessions { get; set; } = new List<GroupSession>();
+    public virtual ICollection<GroupSession> GroupSessions { get; set; }
 
     public virtual Instructor? Instructor { get; set; }
 

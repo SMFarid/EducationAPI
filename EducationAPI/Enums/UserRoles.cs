@@ -4,7 +4,7 @@
     {
         Admin = 1,
         Auditor = 2,
-        Reporting = 3,
+        TeamLeader = 3,
         User = 4
     }
 }

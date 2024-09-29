@@ -5,5 +5,6 @@
         public int Id { get; set; }
         public string? NameEN { get; set; }
         public string? NameAr { get; set; }
+        public string? Email {  get; set; }
     }
 }

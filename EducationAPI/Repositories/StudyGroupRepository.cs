@@ -20,15 +20,28 @@ namespace EducationAPI.Repositories
             return result;
         }
 
+        public async Task<IEnumerable<StudyGroup>> getListOfGroups(List<int> IDsList)
+        {
+            var result = await _context.StudyGroups.Where(e => IDsList.Contains(e.GroupIntId)).ToListAsync();
+            return result;
+        }
+
         public async Task<StudyGroup> getStudyGroupByIntID (int ID)
         {
-            var result = await _context.StudyGroups.Where(c => c.GroupIntId == ID)
-                .FirstOrDefaultAsync();
+            StudyGroup result;
+            try
+            {
+                result = await _context.StudyGroups.Where(c => c.GroupIntId == ID).FirstOrDefaultAsync();
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
 
             return result;
         }
 
-        public async Task<StudyGroup> getStudyGroupByID(string ID)
+        public async Task<StudyGroup> getStudyGroupByCode(string ID)
         {
             var result = await _context.StudyGroups.Where(c => c.RoundCode == ID)
                 .Include(c => c.Instructor)
