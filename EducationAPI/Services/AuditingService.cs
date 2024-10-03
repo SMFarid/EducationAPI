@@ -28,6 +28,7 @@ namespace EducationAPI.Services
         AuditingSessionRepository _auditingSessionRepository = new AuditingSessionRepository();
         ProviderStudyGroupRepository _providerStudyGroupRepository = new ProviderStudyGroupRepository();
         StudentRepository _studentRepository = new StudentRepository();
+        DailyAuditorsAttendanceRepository _dailyAttendanceRepository = new DailyAuditorsAttendanceRepository();
 
         #region Auditing Session
         public async Task<CommonResponse<AuditingSessionCriteraDTO>> getAuditingCritera(string roundCode, int Audtor_ID)
@@ -182,16 +183,16 @@ namespace EducationAPI.Services
                 var provider = await _providerStudyGroupRepository.getProviderbyStudyGroup((int)item.GroupIntID);
                 auditorGroups.Add(new AuditorGroupsDTO
                 {
-                    Doneflag = (int)(item.Conducted != null ? item.Conducted : (int)RoundCodeStates.Open),
+                    Doneflag = item.Conducted,
                     RoundCode = item.StudyGroupRoundCode,
                     SessionDateTime = item.Date.ToShortTimeString(),
                     GroupIntID = item.GroupIntID!= null? (int)item.GroupIntID: 0,
                     SessionType = item.SessionType!=null ? item.SessionType :"",
-                    TrainingProvider = provider.ProviderName
+                    TrainingProvider = provider!= null? provider.ProviderName: ""
                 });
 
             }
-            response.Data = auditorGroups.OrderBy(e=>e.SessionDateTime).ToList();
+            response.Data = auditorGroups.OrderBy(e=>e.Doneflag).ToList();
             return response;
         }
 
@@ -259,21 +260,18 @@ namespace EducationAPI.Services
                 return response;
             }
 
-          
-                var auditorsList = await _authRepository.getAllAuditors();
-                foreach (var item in auditorsList)
+
+            var auditorsList = await _authRepository.getAllAuditors();
+            foreach (var item in auditorsList)
+            {
+                auditors.Add(new AuditorDTO
                 {
-                    if (item.Id != user_id)
-                    {
-                        auditors.Add(new AuditorDTO
-                        {
-                            AuditorID = item.Id,
-                            NameAr = item.Username,
-                            NameEn = item.Username
-                        });
-                    }
-                }
-            
+                    AuditorID = item.Id,
+                    NameAr = item.Username,
+                    NameEn = item.Username
+                });
+            }
+
 
             response.Data = auditors;
             return response;
@@ -320,101 +318,149 @@ namespace EducationAPI.Services
             return response;
         }
 
+        public async Task<CommonResponse<string>> assignAuditorsAuto()
+        {
+            var response = new CommonResponse<string>();
+
+            var dailyAssignments = await _assignmentRepository.getAssignmentsByDate(DateTime.Now);
+            var loggedAuditors = await _dailyAttendanceRepository.getLoggedIn();
+            ////Validate
+            //if (dailyAssignments == null)
+            //{
+            //    response.Errors.Add(new Error { Message = "Error: Daily Assignments not found" });
+            //    return response;
+            //}
+            //var attendedList = auditorList.Where(e => e.attended == true).ToList();
+            //var assignmentsDivision = dailyAssignments.Count() / attendedList.Count();
+            //int startRange = 0;
+            //List<AuditorRoundCodeAssignment> records = new List<AuditorRoundCodeAssignment>();
+            //foreach (var auditor in auditorList)
+            //{
+
+            //    if (startRange + assignmentsDivision < dailyAssignments.Count())
+            //    {
+            //        records = dailyAssignments.Take(new Range(startRange, startRange + assignmentsDivision)).ToList();
+            //    }
+            //    else
+            //    {
+            //        records = dailyAssignments.Take(new Range(startRange, dailyAssignments.Count())).ToList();
+            //    }
+            //    foreach (var item in records)
+            //    {
+            //        item.AuditorId = auditor.AuditorID;
+            //    }
+            //    startRange += assignmentsDivision;
+
+            //}
+
+            //_assignmentRepository.Save();
+
+            //response.Data = "Success";
+
+            return response;
+        }
+
         public async Task<CommonResponse<string>> SaveAuditSession(AuditSessionSaveModel model)
         {
             var response = new CommonResponse<string>();
 
-
-            //Retrieve and Validate
-            var auditingSession = await _auditingSessionRepository.getSessionBySessionID(model.Auditing_Session_ID);
-            if (auditingSession == null)
+            try
             {
-                response.Errors.Add(new Error { Message = "Error: Auditing Session not found!" });
-                return response;
-            }
-            var auditor = await _authRepository.GetAuditorById(model.AuditorId);
-            if (auditor == null)
-            {
-                response.Errors.Add(new Error { Message = "Error: Auditor not found, please check ID" });
-                return response;
-            }
-            var studyGroup = await _studyGroupRepository.getStudyGroupByCode(model.RoundCode);
-            if (studyGroup == null)
-            {
-                response.Errors.Add(new Error { Message = "Error: Round Code not found" });
-                return response;
-            }
-            //get study group session
-            var assignedSession = await _assignmentRepository.getAssignmentByID((int)auditingSession.AssignmentSessionID);
-            assignedSession.Conducted = (int)RoundCodeStates.Done;
-
-
-
-
-            auditingSession.AttendanceType = assignedSession.SessionType; //change later
-                                                                          //Auditor = auditor,
-            auditingSession.AuditorId = model.AuditorId;
-            auditingSession.AuditorName = !auditor.Username.IsNullOrEmpty() ? auditor.Username : "";
-
-            //Course = studyGroup.CourseId, //retrieve name later
-            //Instructor = studyGroup.Instructor,
-            auditingSession.InstructorId = (int)studyGroup.InstructorId != null ? (int)studyGroup.InstructorId : 0;
-            auditingSession.InstructorName = studyGroup.InstructorName;
-            auditingSession.Conducted = model.Conducted;
-            auditingSession.MaterialDelivered = model.MaterialDelivered;
-            auditingSession.CurrentChapter = model.Current_Chapter;
-            //SessionDateTimeStart = (DateTime)model.ReportStart,
-            auditingSession.SessionDateTimeClose = DateTime.Now;
-            auditingSession.DepiLogoAdded = model.Depi_Logo_Flag;
-            auditingSession.LabFlag = model.Lab_Flag;
-            auditingSession.TestFlag = model.Test_Flag;
-            auditingSession.HardwareProficiency = model.HardwareProficiency;
-            auditingSession.UnderstoodExamples = model.UnderstoodExamples;
-            auditingSession.UnderstoonExplaination = model.UnderstoonExplaination;
-            auditingSession.TimeForQuestions = model.TimeForQuestions;
-            auditingSession.InstructorEncouragement = model.InstructorEncouragement;
-            auditingSession.MaterialIsClear = model.MaterialIsClear;
-            auditingSession.ACCondition = model.ACCondition;
-            auditingSession.CenterEnvironment = model.CenterEnvironment;
-            auditingSession.InitiativeClear = model.InitiativeClear;
-            auditingSession.PrevLinks = model.PrevLinks;
-            auditingSession.ConnectionQuality = model.ConnectionQuality.ToString();
-            auditingSession.VoiceQuality = model.VoiceQuality.ToString();
-            auditingSession.VideoQuality = model.VideoQuality.ToString();
-            auditingSession.StudyGroupId = studyGroup.GroupIntId.ToString();
-            auditingSession.SessionType = assignedSession.SessionType;
-            auditingSession.Remarks = model.Remarks;
-            auditingSession.CommentCategory = model.CommentCategory;
-
-
-            var studentAttendance = new List<AuditingSessionAttendance>();
-            var students = await _studentRepository.getListOfStudents(model.StudentsAttendedList);
-
-            //var old_attendance = await _aud
-
-            foreach (var item in students)
-            {
-                var student = new AuditingSessionAttendance
+                //Retrieve and Validate
+                var auditingSession = await _auditingSessionRepository.getSessionBySessionID(model.Auditing_Session_ID);
+                if (auditingSession == null)
                 {
-                    auditingSession = auditingSession,
-                    StudentId = item.TraineeIntId,
-                    StudentName = !string.IsNullOrEmpty(item.NameEn) ? item.NameEn : item.NameAr,
-                    SessionId = auditingSession.SessionId,
-                    SendDate = DateTime.Now
-                };
-                studentAttendance.Add(student);
-            }
-            auditingSession.AuditingSessionAttendances = studentAttendance;
+                    response.Errors.Add(new Error { Message = "Error: Auditing Session not found!" });
+                    return response;
+                }
+                var auditor = await _authRepository.GetAuditorById(model.AuditorId);
+                if (auditor == null)
+                {
+                    response.Errors.Add(new Error { Message = "Error: Auditor not found, please check ID" });
+                    return response;
+                }
+                var studyGroup = await _studyGroupRepository.getStudyGroupByCode(model.RoundCode);
+                if (studyGroup == null)
+                {
+                    response.Errors.Add(new Error { Message = "Error: Round Code not found" });
+                    return response;
+                }
+                //get study group session
+                var assignedSession = await _assignmentRepository.getAssignmentByID((int)auditingSession.AssignmentSessionID);
+                assignedSession.Conducted = (int)RoundCodeStates.Done;
 
 
-            _assignmentRepository.Save();
-             response = await _auditingSessionRepository.Save();
-            if (!response.IsSuccess)
+
+
+                auditingSession.AttendanceType = assignedSession.SessionType; //change later
+                                                                              //Auditor = auditor,
+                auditingSession.AuditorId = model.AuditorId;
+                auditingSession.AuditorName = !auditor.Username.IsNullOrEmpty() ? auditor.Username : "";
+
+                //Course = studyGroup.CourseId, //retrieve name later
+                //Instructor = studyGroup.Instructor,
+                auditingSession.InstructorId = studyGroup.InstructorId != null ? (int)studyGroup.InstructorId : 0;
+                auditingSession.InstructorName = studyGroup.InstructorName;
+                auditingSession.Conducted = model.Conducted;
+                auditingSession.MaterialDelivered = model.MaterialDelivered;
+                auditingSession.CurrentChapter = model.Current_Chapter;
+                //SessionDateTimeStart = (DateTime)model.ReportStart,
+                auditingSession.SessionDateTimeClose = DateTime.Now;
+                auditingSession.DepiLogoAdded = model.Depi_Logo_Flag;
+                auditingSession.LabFlag = model.Lab_Flag;
+                auditingSession.TestFlag = model.Test_Flag;
+                auditingSession.HardwareProficiency = model.HardwareProficiency;
+                auditingSession.UnderstoodExamples = model.UnderstoodExamples;
+                auditingSession.UnderstoonExplaination = model.UnderstoonExplaination;
+                auditingSession.TimeForQuestions = model.TimeForQuestions;
+                auditingSession.InstructorEncouragement = model.InstructorEncouragement;
+                auditingSession.MaterialIsClear = model.MaterialIsClear;
+                auditingSession.ACCondition = model.ACCondition;
+                auditingSession.CenterEnvironment = model.CenterEnvironment;
+                auditingSession.InitiativeClear = model.InitiativeClear;
+                auditingSession.PrevLinks = model.PrevLinks;
+                auditingSession.ConnectionQuality = model.ConnectionQuality.ToString();
+                auditingSession.VoiceQuality = model.VoiceQuality.ToString();
+                auditingSession.VideoQuality = model.VideoQuality.ToString();
+                auditingSession.StudyGroupId = studyGroup.GroupIntId.ToString();
+                auditingSession.SessionType = assignedSession.SessionType;
+                auditingSession.Remarks = model.Remarks;
+                auditingSession.CommentCategory = model.CommentCategory;
+
+
+                var studentAttendance = new List<AuditingSessionAttendance>();
+                var students = await _studentRepository.getListOfStudents(model.StudentsAttendedList);
+
+                //var old_attendance = await _aud
+
+                foreach (var item in students)
+                {
+                    var student = new AuditingSessionAttendance
+                    {
+                        auditingSession = auditingSession,
+                        StudentId = item.TraineeIntId,
+                        StudentName = !string.IsNullOrEmpty(item.NameEn) ? item.NameEn : item.NameAr,
+                        SessionId = auditingSession.SessionId,
+                        SendDate = DateTime.Now
+                    };
+                    studentAttendance.Add(student);
+                }
+                auditingSession.AuditingSessionAttendances = studentAttendance;
+
+
+                _assignmentRepository.Save();
+                response = await _auditingSessionRepository.Save();
+                if (!response.IsSuccess)
+                {
+                    response.Errors.Add(new Error { Message = "Error while saving" });
+                    return response;
+                }
+                response.Data = "Success";
+            } catch (Exception ex)
             {
-                response.Errors.Add(new Error { Message = "Error while saving" });
+                response.Errors.Add(new Error { Message = "Exception: " + ex.ToString() });
                 return response;
             }
-            response.Data = "Success";
 
             //
             return response;
@@ -513,10 +559,15 @@ namespace EducationAPI.Services
 
             var assignedCodes = await _assignmentRepository.getAssignmentsByDate(DateTime.Now);
             
+
             if (assignedCodes != null)
             {
                 foreach (var code in assignedCodes)
                 {
+                    Auth auditor = new Auth();
+                    if (code.AuditorId != null && code.AuditorId != 0)
+                        auditor = await _authRepository.GetAuditorById((int)code.AuditorId);
+                    var provider = await _providerStudyGroupRepository.getProviderbyStudyGroup((int)code.GroupIntID);
                     StudyGroups.Add(new RoundCodeAssignmentDTO
                     {
                         RoundCode = code.StudyGroupRoundCode,
@@ -524,10 +575,12 @@ namespace EducationAPI.Services
                         Status = 1,
                         AssignmentDate = code.Date,
                         AuditorID = code.AuditorId,
+                        AuditorName = auditor != null ? auditor.Username: "",
                         Conducted = code.Conducted,
                         StatusName = Enum.GetName(typeof(RoundCodeStates), code.Conducted),
                         GroupIntID = code.GroupIntID,
-                        SessionType = code.SessionType != null ? code.SessionType.ToString() :""
+                        SessionType = code.SessionType != null ? code.SessionType.ToString() :"",
+                        TrainingProvider = provider != null ? provider.ProviderName : ""
                     }) ;
                 }
             }
@@ -552,7 +605,7 @@ namespace EducationAPI.Services
                             Status = 0,
                             GroupIntID = code.GroupIntId,
                             SessionType = "",
-                            TrainingProvider = provider.ProviderName
+                            TrainingProvider = provider!= null? provider.ProviderName: ""
                         });
                     }
                 }
@@ -565,8 +618,6 @@ namespace EducationAPI.Services
             response.Data = StudyGroups;
             return response;
         }
-
-
 
         public async Task<CommonResponse<string>> EditAuditAssignment(EditAssignmentModel model)
         {

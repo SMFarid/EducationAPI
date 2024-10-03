@@ -1,4 +1,5 @@
-﻿using EducationAPI.Context;
+﻿using Azure;
+using EducationAPI.Context;
 using EducationAPI.Domain;
 using EducationAPI.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -30,19 +31,24 @@ namespace EducationAPI.Repositories
         public async Task<IEnumerable<AuditorRoundCodeAssignment>> getAssignmentsByDate(DateTime date)
         {
             //var 
-            var result = await _context.AuditorRoundCodeAssignments.Where(c =>c.Date.Date == date.Date).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date
-
-            return result;
+            try
+            {
+                var result = await _context.AuditorRoundCodeAssignments.Where(c => c.Date.Date == date.Date).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date
+                return result;
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return null;
         }
 
         public async Task<IEnumerable<AuditorRoundCodeAssignment>> getAuditorAssignment(int AuditorID, DateTime date)
         {
             try
             {
-                var result = await _context.AuditorRoundCodeAssignments.Where(e => e.Conducted != (int)RoundCodeStates.Done 
-                && e.Date.Date == date.Date
-                && e.AuditorId == AuditorID)
-                    .ToListAsync();
+                var result = await _context.AuditorRoundCodeAssignments.Where(e => e.Date.Date == date.Date)//e.Conducted != (int)RoundCodeStates.Done 
+                .Where(e=> e.AuditorId == AuditorID)
+                .ToListAsync();
 
                 return result;
             } catch (Exception ex)

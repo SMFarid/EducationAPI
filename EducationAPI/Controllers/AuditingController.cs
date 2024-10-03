@@ -3,6 +3,7 @@ using EducationAPI.Context;
 using EducationAPI.DTO;
 using EducationAPI.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace EducationAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[EnableCors("AllowAll")]
     //[Authorize]
     public class AuditingController : ControllerBase
     {
@@ -80,6 +82,13 @@ namespace EducationAPI.Controllers
         public async Task<CommonResponse<string>> AutoAssignAuditors(List<AuditorAttendanceDTO> auditorList)
         {
             return await auditingService.assignAuditors(auditorList);
+        }
+
+        [HttpGet]
+        [Route("AutoAssignAuditors2")]
+        public async Task<CommonResponse<string>> AutoAssignAuditors2()
+        {
+            return await auditingService.assignAuditorsAuto();
         }
 
         [HttpPost]

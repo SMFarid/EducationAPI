@@ -100,7 +100,7 @@ public partial class StudentDBContext : DbContext
     { 
         
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=CALIBARN;Database=DEPI2;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;User ID=sherin;Password=P@ssw0rd"
+        => optionsBuilder.UseSqlServer("Server=CALIBARN;Database=DEPI3;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;User ID=sherin;Password=P@ssw0rd"
         //=> optionsBuilder.UseSqlServer("Server=DESKTOP-GBPLSPS;Database=DEPI2;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;User ID=sherin;Password=P@ssw0rd"
         //=> optionsBuilder.UseSqlServer("Server=DEPI-DB;Database=DEPI;Trusted_Connection=False;Encrypt=False;TrustServerCertificate=True;Integrated Security=False;User ID=depiDBUser;Password=P@ssw0rd"
         ////=> optionsBuilder.UseSqlServer("DATA SOURCE=10.0.27.100:1433/DEPI-DB;Database=DEPI;Trusted_Connection=False;Encrypt=False;TrustServerCertificate=True;Integrated Security=False;User ID=depiDBUser;Password=P@ssw0rd"
@@ -293,9 +293,9 @@ public partial class StudentDBContext : DbContext
             //entity.HasOne(d => d.auditorRoundCodeAssignment).WithMany()
             //    .HasForeignKey(e =>e.);
 
-            entity.HasOne(d => d.Auditor).WithMany(p => p.AuditingSessions)
-                .HasForeignKey(d => d.AuditorId)
-                .HasConstraintName("FK_Auditing_Session_Auditor");
+            //entity.HasOne(d => d.Auditor).WithMany(p => p.AuditingSessions)
+            //    .HasForeignKey(d => d.AuditorId)
+            //    .HasConstraintName("FK_Auditing_Session_Auditor");
 
             entity.HasOne(d => d.Center).WithMany(p => p.AuditingSessions)
                 .HasForeignKey(d => d.CenterId)
@@ -389,13 +389,14 @@ public partial class StudentDBContext : DbContext
                 .HasColumnName("SessionType");
 
             entity.Property(e => e.GroupIntID).HasColumnName("Group_Int_ID");
+            entity.Property(e => e.AuditingSessionID).HasColumnName("Auditing_Session_ID");
 
-            entity.HasOne(d => d.auditingSession).WithMany()
-                .HasForeignKey(e => e.AssignmentSessionID);
+            //entity.HasOne(d => d.auditingSession).WithMany()
+            //    .HasPrincipalKey(e => e.AssignmentSessionID);
 
-            entity.HasOne(d => d.Auditor).WithMany()
-                .HasForeignKey(d => d.AuditorId)
-                .HasConstraintName("FK_Auditor_Sessions_Auditor");
+            //entity.HasOne(d => d.Auditor).WithMany()
+            //    .HasForeignKey(d => d.AuditorId);
+                //.HasConstraintName("FK_Auditor_Sessions_Auditor");
         });
 
         modelBuilder.Entity<College>(entity =>

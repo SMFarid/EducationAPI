@@ -95,9 +95,10 @@ public partial class AuditingSession
     public int? AssignmentSessionID { get; set; }
     public string? Remarks { get; set; }
 
+
     //public virtual AuditorRoundCodeAssignment auditorRoundCodeAssignment { get; set; }
 
-    public virtual Auditor Auditor { get; set; } = null!;
+    //public virtual Auditor Auditor { get; set; } = null!;
 
     public virtual TrainingCenter? Center { get; set; }
 

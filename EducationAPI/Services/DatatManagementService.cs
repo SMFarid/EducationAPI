@@ -164,8 +164,8 @@ namespace EducationAPI.Services
         {
             var result = new CommonResponse<ViewStudyGroupDTO>();
 
-            var studyGroup = await _studyGroupRepository.getStudyGroupByIntID(groupIntID);
-
+            var studyGroupRes = await _studyGroupRepository.getStudyGroupByIntID(groupIntID);
+            var studyGroup = studyGroupRes.Data;
             if (studyGroup == null)
             {
                 result.Errors.Add(new Error { Message = "VIEW: Group with ID: " + groupIntID + " not found!" });
@@ -215,15 +215,13 @@ namespace EducationAPI.Services
         {
             var result = new CommonResponse<ViewStudyGroupDTO>();
 
-            var studyGroup = await _studyGroupRepository.getStudyGroupByIntID(model.GroupIntId);
-
+            var studyGroupRes = await _studyGroupRepository.getStudyGroupByIntID(model.GroupIntId);
+            var studyGroup = studyGroupRes.Data;
             if (studyGroup == null)
             {
                 result.Errors.Add(new Error { Message = "EDIT: Group with ID: " + model.GroupIntId + " not found!" });
                 return result;
             }
-
-
 
             if (!string.IsNullOrEmpty(model.RoundCode))
                 studyGroup.RoundCode = model.RoundCode;

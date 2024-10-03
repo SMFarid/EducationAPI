@@ -17,7 +17,8 @@ public partial class AuditorRoundCodeAssignment
     public int AssignmentSessionID { get; set; }
     public string? SessionType { get; set; }
     public int? GroupIntID { get; set; }
+    public int? AuditingSessionID { get; set; }
 
-    public virtual Auditor Auditor { get; set; } = null!;
-    public virtual AuditingSession auditingSession { get; set; }
+    //public virtual Auditor Auditor { get; set; } = null!;
+    //public virtual AuditingSession? auditingSession { get; set; }
 }

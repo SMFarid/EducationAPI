@@ -1,4 +1,5 @@
-﻿using EducationAPI.Context;
+﻿using EducationAPI.Common;
+using EducationAPI.Context;
 using EducationAPI.Domain;
 using EducationAPI.DTO;
 using Microsoft.EntityFrameworkCore;
@@ -26,16 +27,17 @@ namespace EducationAPI.Repositories
             return result;
         }
 
-        public async Task<StudyGroup> getStudyGroupByIntID (int ID)
+        public async Task<CommonResponse<StudyGroup>> getStudyGroupByIntID (int ID)
         {
-            StudyGroup result;
+            CommonResponse<StudyGroup> result = new CommonResponse<StudyGroup>();
             try
             {
-                result = await _context.StudyGroups.Where(c => c.GroupIntId == ID).FirstOrDefaultAsync();
+                result.Data = await _context.StudyGroups.Where(c => c.GroupIntId == ID).FirstOrDefaultAsync();
             } catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return null;
+                result.Errors.Add(new Error{ Message = ex.Message});
+                return result;
             }
 
             return result;
