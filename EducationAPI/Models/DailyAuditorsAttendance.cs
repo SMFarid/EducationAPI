@@ -11,5 +11,5 @@ public partial class DailyAuditorsAttendance
 
     public DateTime? LoginTime { get; set; }
 
-    public virtual Auth Auditor { get; set; } = null!;
+    public virtual Auth Auditor { get; set; }
 }

@@ -31,6 +31,7 @@ public partial class StudentDBContext : DbContext
     }
 
     public virtual DbSet<AuditingSession> AuditingSessions { get; set; }
+    public virtual DbSet<AuditingSessionAttendance> AuditingSessionAttendances { get; set; }
 
     public virtual DbSet<Auditor> Auditors { get; set; }
 
@@ -100,9 +101,9 @@ public partial class StudentDBContext : DbContext
     { 
         
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=CALIBARN;Database=DEPI3;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;User ID=sherin;Password=P@ssw0rd"
+        //=> optionsBuilder.UseSqlServer("Server=CALIBARN;Database=DEPI4;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;User ID=sherin;Password=P@ssw0rd"
         //=> optionsBuilder.UseSqlServer("Server=DESKTOP-GBPLSPS;Database=DEPI2;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;User ID=sherin;Password=P@ssw0rd"
-        //=> optionsBuilder.UseSqlServer("Server=DEPI-DB;Database=DEPI;Trusted_Connection=False;Encrypt=False;TrustServerCertificate=True;Integrated Security=False;User ID=depiDBUser;Password=P@ssw0rd"
+        => optionsBuilder.UseSqlServer("Server=DEPI-DB;Database=DEPI;Trusted_Connection=False;Encrypt=False;TrustServerCertificate=True;Integrated Security=False;User ID=depiDBUser;Password=P@ssw0rd"
         ////=> optionsBuilder.UseSqlServer("DATA SOURCE=10.0.27.100:1433/DEPI-DB;Database=DEPI;Trusted_Connection=False;Encrypt=False;TrustServerCertificate=True;Integrated Security=False;User ID=depiDBUser;Password=P@ssw0rd"
             , options => options.EnableRetryOnFailure())
         .EnableSensitiveDataLogging()
@@ -134,9 +135,11 @@ public partial class StudentDBContext : DbContext
             entity.ToTable("Auditing_Session");
 
             entity.Property(e => e.SessionId).HasColumnName("Session_ID");
+
             entity.Property(e => e.AttendanceEvidence)
                 .HasColumnType("image")
                 .HasColumnName("Attendance_Evidence");
+
             entity.Property(e => e.AttendanceType)
                 .HasMaxLength(50)
                 .HasColumnName("Attendance_Type");
@@ -287,6 +290,12 @@ public partial class StudentDBContext : DbContext
                 .HasMaxLength(500)
                 .HasColumnName("Remarks");
 
+            //Added 07/11/2024
+            entity.Property(e => e.LastModified)
+                .HasColumnType("datetime")
+                .HasColumnName("Last_Modified");
+            
+
 
             ///Relations->
             ///
@@ -329,6 +338,7 @@ public partial class StudentDBContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("Student_Name");
             entity.Property(e => e.SendDate).HasColumnType("datetime").HasColumnName("SendDate");
+            entity.Property(e => e.presense).HasColumnName("presense").HasColumnType("Bit");
 
             entity.HasOne(e => e.auditingSession).WithMany(e => e.AuditingSessionAttendances)
             .HasPrincipalKey(e => e.SessionId)

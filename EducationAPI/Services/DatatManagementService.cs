@@ -32,6 +32,8 @@ namespace EducationAPI.Services
 
             //Change details if found
 
+            if (!string.IsNullOrEmpty(model.StudentAppID))
+                student.StudentAppId = model.StudentAppID;
             if (!string.IsNullOrEmpty(model.SocialID))
                 student.SocialId = model.SocialID;
             if (!string.IsNullOrEmpty(model.NameEn))
@@ -63,6 +65,57 @@ namespace EducationAPI.Services
 
             response = await GetStudent(model.StudentID);
             
+            return response;
+        }
+
+        public async Task<CommonResponse<StudentViewModel>> AddStudent(StudentAddModel model)
+        {
+            var response = new CommonResponse<StudentViewModel>();
+
+            //Validate
+            var student = await _studentRepository.getStudentByAppID(model.StudentAppID);
+
+            if (student != null)
+            {
+                response.Errors.Add(new Error { Message = "Student with ID: " + model.StudentAppID + " already exists! " });
+                return response;
+            }
+
+            student = new Trainee();
+            //Change details if found
+
+            if (!string.IsNullOrEmpty(model.SocialID))
+                student.SocialId = model.SocialID;
+            if (!string.IsNullOrEmpty(model.NameEn))
+                student.NameEn = model.NameEn;
+            if (!string.IsNullOrEmpty(model.NameAr))
+                student.NameAr = model.NameAr;
+            if (model.TrackID != null)
+                student.TrackId = model.TrackID;
+            if (!string.IsNullOrEmpty(model.RoundCode))
+                student.RoundCode = model.RoundCode;
+            if (model.GroupIntID != null)
+                student.GroupIntID = (int)model.GroupIntID;
+            if (!string.IsNullOrEmpty(model.StudyGovernorate))
+                student.StudyGovernorate = model.StudyGovernorate;
+            if (!string.IsNullOrEmpty(model.Address))
+                student.Address = model.Address;
+            if (!string.IsNullOrEmpty(model.City))
+                student.City = model.City;
+            if (!string.IsNullOrEmpty(model.Email))
+                student.Email = model.Email;
+            if (!string.IsNullOrEmpty(model.Mobile))
+                student.Mobile = model.Mobile;
+            if (!string.IsNullOrEmpty(model.Status))
+                student.Status = model.Status;
+            if (model.Active != null)
+                student.Active = (bool)model.Active;
+
+            _studentRepository.Add(student);
+            await _studentRepository.Save();
+
+            response = await GetStudent(student.TraineeIntId);
+
             return response;
         }
 
@@ -164,8 +217,8 @@ namespace EducationAPI.Services
         {
             var result = new CommonResponse<ViewStudyGroupDTO>();
 
-            var studyGroupRes = await _studyGroupRepository.getStudyGroupByIntID(groupIntID);
-            var studyGroup = studyGroupRes.Data;
+            var studyGroup = await _studyGroupRepository.getStudyGroupByIntID(groupIntID);
+            
             if (studyGroup == null)
             {
                 result.Errors.Add(new Error { Message = "VIEW: Group with ID: " + groupIntID + " not found!" });
@@ -215,8 +268,8 @@ namespace EducationAPI.Services
         {
             var result = new CommonResponse<ViewStudyGroupDTO>();
 
-            var studyGroupRes = await _studyGroupRepository.getStudyGroupByIntID(model.GroupIntId);
-            var studyGroup = studyGroupRes.Data;
+            var studyGroup = await _studyGroupRepository.getStudyGroupByIntID(model.GroupIntId);
+            
             if (studyGroup == null)
             {
                 result.Errors.Add(new Error { Message = "EDIT: Group with ID: " + model.GroupIntId + " not found!" });
@@ -270,6 +323,70 @@ namespace EducationAPI.Services
             await _studyGroupRepository.Save();
 
             result = await GetGroupDetails(model.GroupIntId);
+
+            return result;
+        }
+
+        public async Task<CommonResponse<ViewStudyGroupDTO>> AddGroup(AddStudyGroupDTO model)
+        {
+            var result = new CommonResponse<ViewStudyGroupDTO>();
+
+            var studyGroup = await _studyGroupRepository.getStudyGroupByCode(model.RoundCode);
+
+            if (studyGroup != null)
+            {
+                result.Errors.Add(new Error { Message = "EDIT: Group with ID: " + model.RoundCode + " Already exists!" });
+                return result;
+            }
+            studyGroup = new StudyGroup();
+            if (!string.IsNullOrEmpty(model.RoundCode))
+                studyGroup.RoundCode = model.RoundCode;
+
+            if (model.Capacity != null)
+                studyGroup.Capacity = model.Capacity;
+            if (!string.IsNullOrEmpty(model.ExpectedEndTime))
+                studyGroup.ExpectedEndTime = model.ExpectedEndTime;
+            if (!string.IsNullOrEmpty(model.Governorate))
+                studyGroup.Governorate = model.Governorate;
+            if (!string.IsNullOrEmpty(model.GroupStartTime))
+                studyGroup.GroupStartTime = model.GroupStartTime;
+            if (model.InstructorId != null && model.InstructorId != 0)
+                studyGroup.InstructorId = model.InstructorId;
+            if (!string.IsNullOrEmpty(model.InstructorName))
+                studyGroup.InstructorName = model.InstructorName;
+            if (model.JobProfileIntId != null)
+                studyGroup.JobProfileIntId = model.JobProfileIntId;
+            if (!string.IsNullOrEmpty(model.LocationAddress))
+                studyGroup.LocationAddress = model.LocationAddress;
+            if (!string.IsNullOrEmpty(model.LocationGoogleMap))
+                studyGroup.LocationGoogleMap = model.LocationGoogleMap;
+            if (!string.IsNullOrEmpty(model.MeetingLink))
+                studyGroup.MeetingLink = model.MeetingLink;
+            if (!string.IsNullOrEmpty(model.MeetingLinkId))
+                studyGroup.MeetingLinkId = model.MeetingLinkId;
+            if (!string.IsNullOrEmpty(model.MeetingLinkPasscode))
+                studyGroup.MeetingLinkPasscode = model.MeetingLinkPasscode;
+            if (model.NumberOfStudents != null)
+                studyGroup.NumberOfStudents = model.NumberOfStudents;
+            if (!string.IsNullOrEmpty(model.StudyGroupType))
+                studyGroup.StudyGroupType = model.StudyGroupType;
+            if (!string.IsNullOrEmpty(model.TrackCode))
+                studyGroup.TrackCode = model.TrackCode;
+            if (model.TrackIntId != null)
+                studyGroup.TrackIntId = model.TrackIntId;
+            if (!string.IsNullOrEmpty(model.TraineeType))
+                studyGroup.TraineeType = model.TraineeType;
+            if (!string.IsNullOrEmpty(model.WeekDayEndFlag))
+                studyGroup.WeekDayEndFlag = model.WeekDayEndFlag;
+            if (model.WelcomeMessage != null)
+                studyGroup.WelcomeMessage = model.WelcomeMessage;
+            if (!string.IsNullOrEmpty(model.YearSemester))
+                studyGroup.YearSemester = model.YearSemester;
+
+            _studyGroupRepository.Add(studyGroup);
+            await _studyGroupRepository.Save();
+
+            result = await GetGroupDetails(studyGroup.GroupIntId);
 
             return result;
         }

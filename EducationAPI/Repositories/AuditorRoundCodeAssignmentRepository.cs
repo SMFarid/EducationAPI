@@ -42,6 +42,25 @@ namespace EducationAPI.Repositories
             return null;
         }
 
+        public async Task<IEnumerable<AuditorRoundCodeAssignment>> getAssignmentsByTimeFrame(DateTime date, TimeSpan startTime, TimeSpan endTime)
+        {
+            //var 
+            try
+            {
+                var result = await _context.AuditorRoundCodeAssignments
+                    .Where(x => x.AuditorId == null || x.AuditorId == 0)
+                    .Where(c => c.Date.Date == DateTime.Now.Date)
+                    .Where(c => c.Date.TimeOfDay >= startTime && c.Date.TimeOfDay <= endTime)
+                    .ToListAsync(); 
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return null;
+        }
+
         public async Task<IEnumerable<AuditorRoundCodeAssignment>> getAuditorAssignment(int AuditorID, DateTime date)
         {
             try

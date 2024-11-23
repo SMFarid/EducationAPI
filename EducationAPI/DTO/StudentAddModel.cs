@@ -2,11 +2,9 @@
 
 namespace EducationAPI.DTO
 {
-    public class StudentEditModel
+    public class StudentAddModel
     {
-        [Required]
-        public int StudentID { get; set; }
-        public string? StudentAppID { get; set; }
+        public string StudentAppID { get; set; }
         public string? SocialID { get; set; }
         public string? NameEn { get; set; }
         public string? NameAr { get; set; }

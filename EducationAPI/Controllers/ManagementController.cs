@@ -29,6 +29,13 @@ namespace EducationAPI.Controllers
             return await _managementService.EditStudent(model);
         }
 
+        [HttpPost]
+        [Route("AddStudent")]
+        public async Task<CommonResponse<StudentViewModel>> AddStudent(StudentAddModel model)
+        {
+            return await _managementService.AddStudent(model);
+        }
+
         [HttpGet]
         [Route("GetStudentDetails")]
         public async Task<CommonResponse<StudentViewModel>> GetStudentDetails(int studentID)
@@ -51,6 +58,20 @@ namespace EducationAPI.Controllers
         {
             return await _managementService.EditGroup(model);
         }
+
+        [HttpPost]
+        [Route("AddGroup")]
+        public async Task<CommonResponse<ViewStudyGroupDTO>> AddGroup(AddStudyGroupDTO model)
+        {
+            return await _managementService.AddGroup(model);
+        }
+
+        //[HttpPost]
+        //[Route("EditTrainee")]
+        //public async Task<CommonResponse<ViewStudyGroupDTO>> EditTrainee(EditStudyGroupDTO model)
+        //{
+        //    return await _managementService.EditTrainee(model);
+        //}
 
         [HttpGet]
         [Route("GetGroupDetails")]

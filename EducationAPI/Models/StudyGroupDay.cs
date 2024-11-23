@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Identity.Client;
+using System;
 using System.Collections.Generic;
 
 namespace EducationAPI.Domain;
@@ -28,6 +29,12 @@ public partial class StudyGroupDay
     public DateTime? ActiveTo { get; set; }
 
     public string RoundCode { get; set;}
+
+    public TimeOnly? OnlineTimeInterval { get; set; }
+    public TimeOnly? PhysicalTimeInterval { get; set; }
+    public TimeOnly? SoftskillTimeInterval { get; set; }
+    public TimeOnly? CoachingTimeInterval { get; set; }
+    public TimeOnly? EnglishTimeInterval { get; set; }
 
     //public virtual StudyGroup StudyGroup { get; set; };
 }

@@ -27,20 +27,22 @@ namespace EducationAPI.Repositories
             return result;
         }
 
-        public async Task<CommonResponse<StudyGroup>> getStudyGroupByIntID (int ID)
+        public async Task<StudyGroup> getStudyGroupByIntID(int ID)
         {
-            CommonResponse<StudyGroup> result = new CommonResponse<StudyGroup>();
+
             try
             {
-                result.Data = await _context.StudyGroups.Where(c => c.GroupIntId == ID).FirstOrDefaultAsync();
-            } catch (Exception ex)
+                return await _context.StudyGroups.Where(c => c.GroupIntId == ID)
+                    .Include(c => c.Instructor).DefaultIfEmpty()
+                    .Include(c => c.Trainees).DefaultIfEmpty()
+                    .FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                result.Errors.Add(new Error{ Message = ex.Message});
-                return result;
-            }
 
-            return result;
+                return null;
+            }
         }
 
         public async Task<StudyGroup> getStudyGroupByCode(string ID)
@@ -87,6 +89,19 @@ namespace EducationAPI.Repositories
             {
                await _context.SaveChangesAsync();
             } catch (Exception ex){
+                return ex.Message;
+            }
+            return "Success!";
+        }
+
+        public string Add(StudyGroup studyGroup)
+        {
+            try
+            {
+                 _context.Add(studyGroup);
+            }
+            catch (Exception ex)
+            {
                 return ex.Message;
             }
             return "Success!";

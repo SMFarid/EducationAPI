@@ -1,6 +1,6 @@
 ﻿namespace EducationAPI.DTO
 {
-    public class EditStudyGroupDTO
+    public class AddStudyGroupDTO
     {
         public string? RoundCode { get; set; }
 
@@ -8,7 +8,6 @@
 
         public string? TrackCode { get; set; }
 
-        public int GroupIntId { get; set; }
         public string? Provider { get; set; }
 
         public int? JobProfileIntId { get; set; }
@@ -46,7 +45,5 @@
         public string? TraineeType { get; set; }
 
         public string? WeekDayEndFlag { get; set; }
-
-        public StudyGroupDaysDTO studyGroupDaysDTO { get; set; }
     }
 }

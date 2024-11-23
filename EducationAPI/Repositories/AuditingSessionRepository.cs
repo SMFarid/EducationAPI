@@ -21,7 +21,17 @@ namespace EducationAPI.Repositories
 
         public async Task<AuditingSession> getSessionBySessionID(int sessionID)
         {
-            return await _context.AuditingSessions.Where(e => e.SessionId == sessionID).FirstOrDefaultAsync();
+            return await _context.AuditingSessions.Where(e => e.SessionId == sessionID)
+                .Include(e => e.AuditingSessionAttendances).DefaultIfEmpty()
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<List<AuditingSession>> getSessionsByGroup(int groupID)
+        {
+            return await _context.AuditingSessions.Where(e => e.StudyGroupId == groupID.ToString())
+                .Include(e => e.AuditingSessionAttendances).DefaultIfEmpty()
+                .Include(e => e.Instructor).DefaultIfEmpty()
+                .ToListAsync();
         }
 
         public async Task<string> Add(AuditingSession session)

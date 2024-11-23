@@ -21,6 +21,12 @@ namespace EducationAPI.Repositories
             return result;
         }
 
+        public async Task<Trainee> getStudentByAppID(string studentID)
+        {
+            var result = await _context.Trainees.Where(e => e.StudentAppId == studentID).FirstOrDefaultAsync();
+            return result;
+        }
+
         public async Task<IEnumerable<Trainee>> getAllStudent()
         {
             var result = await _context.Trainees.ToListAsync();
@@ -44,6 +50,11 @@ namespace EducationAPI.Repositories
                 return ex.Message;
             }
             return "success";
+        }
+
+        public void Add(Trainee trainee)
+        {
+            _context.Add(trainee);
         }
 
     }

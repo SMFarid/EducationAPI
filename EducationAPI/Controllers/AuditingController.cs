@@ -24,9 +24,9 @@ namespace EducationAPI.Controllers
         [HttpGet]
         
         [Route("GetCriteria")]
-        public async Task<CommonResponse<AuditingSessionCriteraDTO>> GetCritera(string roundcode, int Auditor_ID)
+        public async Task<CommonResponse<AuditingSessionCriteraDTO>> GetCritera(int Assignment_ID, int Auditor_ID)
         {
-            return await auditingService.getAuditingCritera(roundcode, Auditor_ID);
+            return await auditingService.getAuditingCritera(Assignment_ID, Auditor_ID);
         }
 
         [HttpGet]
@@ -89,6 +89,20 @@ namespace EducationAPI.Controllers
         public async Task<CommonResponse<string>> AutoAssignAuditors2()
         {
             return await auditingService.assignAuditorsAuto();
+        }
+
+        [HttpGet]
+        [Route("AutoAssignAuditorsMorning")]
+        public async Task<CommonResponse<string>> AutoAssignAuditorsMorning()
+        {
+            return await auditingService.assignAuditorsAutoMorning();
+        }
+
+        [HttpGet]
+        [Route("AutoAssignAuditorsAfternoon")]
+        public async Task<CommonResponse<string>> AutoAssignAuditorsAfternoon()
+        {
+            return await auditingService.assignAuditorsAutoAfternoon();
         }
 
         [HttpPost]

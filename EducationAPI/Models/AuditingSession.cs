@@ -94,6 +94,7 @@ public partial class AuditingSession
     public string? CommentCategory { get; set; }
     public int? AssignmentSessionID { get; set; }
     public string? Remarks { get; set; }
+    public DateTime? LastModified { get; set; }
 
 
     //public virtual AuditorRoundCodeAssignment auditorRoundCodeAssignment { get; set; }

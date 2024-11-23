@@ -13,13 +13,14 @@ namespace EducationAPI.Repositories
             _context = new StudentDBContext();
         }
 
-        public async Task<IEnumerable<DailyAuditorsAttendance>> getLoggedIn()
+        public async Task<IEnumerable<DailyAuditorsAttendance>> getLoggedIn(TimeSpan startTime, TimeSpan endTime)
         {
-            TimeSpan startTime = new TimeSpan(17, 30, 0);
-            TimeSpan endTime = new TimeSpan(18, 0, 0);
+            
             var result = await _context.DailyAuditorsAttendances
+                .Include(c => c.Auditor)
                 .Where(c => c.LoginTime.Value.Date == DateTime.Now.Date)
                 .Where(c => c.LoginTime.Value.TimeOfDay >= startTime && c.LoginTime.Value.TimeOfDay <= endTime)
+                .Where(c => c.Auditor.Id == 4) //change to enum
                 .ToListAsync();
             return result;
         }

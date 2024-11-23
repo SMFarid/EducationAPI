@@ -8,5 +8,6 @@
         public int GroupIntID { get; set; }
         public string SessionType { get; set; }
         public string TrainingProvider { get; set; }
+        public int AssignmentID { get; set; }
     }
 }

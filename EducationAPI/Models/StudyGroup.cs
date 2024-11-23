@@ -56,7 +56,7 @@ public partial class StudyGroup
 
     public virtual ICollection<GroupSession> GroupSessions { get; set; }
 
-    public virtual Instructor? Instructor { get; set; }
+    public virtual Instructor? Instructor { get; set; } 
 
     public virtual JobProfile? JobProfileInt { get; set; }
 
@@ -66,6 +66,6 @@ public partial class StudyGroup
 
     public virtual Track? TrackIntNavigation { get; set; }
     //public virtual ProviderStudyGroup? TrainingProvider {  get; set; }
-    public List<Trainee>? Trainees { get; set; }
+    public List<Trainee>? Trainees { get; set; } 
     //public virtual TrainingProvider trainingProvider { get; set; }
 }
