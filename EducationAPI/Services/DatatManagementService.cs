@@ -44,7 +44,7 @@ namespace EducationAPI.Services
                 student.TrackId = model.TrackID;
             if (!string.IsNullOrEmpty(model.RoundCode))
                 student.RoundCode = model.RoundCode;
-            if (model.GroupIntID!= null)
+            if (model.GroupIntID != null)
                 student.GroupIntID = (int)model.GroupIntID;
             if (!string.IsNullOrEmpty(model.StudyGovernorate))
                 student.StudyGovernorate = model.StudyGovernorate;
@@ -64,7 +64,7 @@ namespace EducationAPI.Services
             await _studentRepository.Save();
 
             response = await GetStudent(model.StudentID);
-            
+
             return response;
         }
 
@@ -172,10 +172,10 @@ namespace EducationAPI.Services
             var result = new CommonResponse<List<StudentDTO>>();
 
             var studentsList = await _studentRepository.getAllStudent();
-            List <StudentDTO> returnList = new List<StudentDTO>();
-            foreach ( var student in studentsList )
+            List<StudentDTO> returnList = new List<StudentDTO>();
+            foreach (var student in studentsList)
             {
-                var studentDTO = new StudentDTO{
+                var studentDTO = new StudentDTO {
                     Id = student.TraineeIntId,
                     NameAr = student.NameAr,
                     NameEN = student.NameEn
@@ -195,7 +195,7 @@ namespace EducationAPI.Services
             var response = new CommonResponse<List<RoundCodeDTO>>();
             List<RoundCodeDTO> StudyGroupsList = new List<RoundCodeDTO>();
 
-            var studyGroups = await _studyGroupRepository.getAllGroups();   
+            var studyGroups = await _studyGroupRepository.getAllGroups();
 
             if (studyGroups != null)
             {
@@ -208,17 +208,17 @@ namespace EducationAPI.Services
                     });
                 }
             }
-           
+
             response.Data = StudyGroupsList;
             return response;
         }
 
-        public async Task<CommonResponse<ViewStudyGroupDTO>> GetGroupDetails (int groupIntID)
+        public async Task<CommonResponse<ViewStudyGroupDTO>> GetGroupDetails(int groupIntID)
         {
             var result = new CommonResponse<ViewStudyGroupDTO>();
 
             var studyGroup = await _studyGroupRepository.getStudyGroupByIntID(groupIntID);
-            
+
             if (studyGroup == null)
             {
                 result.Errors.Add(new Error { Message = "VIEW: Group with ID: " + groupIntID + " not found!" });
@@ -231,6 +231,7 @@ namespace EducationAPI.Services
                 result.Errors.Add(new Common.Error { Message = "Error: Unable to find provider for this group" });
                 //return response;
             }
+
 
             ViewStudyGroupDTO studyGroupDTO = new ViewStudyGroupDTO
             {
@@ -246,7 +247,7 @@ namespace EducationAPI.Services
                 LocationAddress = studyGroup.LocationAddress,
                 LocationGoogleMap = studyGroup.LocationGoogleMap,
                 MeetingLink = studyGroup.MeetingLink,
-                MeetingLinkId = studyGroup.MeetingLinkId,   
+                MeetingLinkId = studyGroup.MeetingLinkId,
                 MeetingLinkPasscode = studyGroup.MeetingLinkPasscode,
                 NumberOfStudents = studyGroup.NumberOfStudents,
                 StudyGroupType = studyGroup.StudyGroupType,
@@ -258,6 +259,31 @@ namespace EducationAPI.Services
                 WelcomeMessage = studyGroup.WelcomeMessage,
                 YearSemester = studyGroup.YearSemester
             };
+
+            if (studyGroup.StudyGroupDay != null || studyGroup.StudyGroupDay.FirstOrDefault() != null )
+            {
+                var schedule = studyGroup.StudyGroupDay.OrderByDescending(c => c.SrlNo).FirstOrDefault();
+
+                var studyGroupDays = new StudyGroupDaysDTO
+                {
+                    StudyGroupId = schedule.StudyGroupId,
+                    RoundCode = schedule.RoundCode,
+                    OnlineDay1 = schedule.OnlineDay1,
+                    OnlineDay2 = schedule.OnlineDay2,
+                    OnlineDay3 = schedule.OnlineDay3,
+                    PhysicalDay = schedule.PhysicalDay,
+                    SoftskillDay = schedule.SoftskillDay,
+                    CoachingDay = schedule.CoachingDay,
+                    EnglishDay = schedule.EnglishDay,
+
+                    OnlineTimeInterval = schedule.OnlineTimeInterval,
+                    PhysicalTimeInterval = schedule.PhysicalTimeInterval,
+                    SoftskillTimeInterval = schedule.SoftskillTimeInterval,
+                    CoachingTimeInterval = schedule.CoachingTimeInterval,
+                    EnglishTimeInterval = schedule.EnglishTimeInterval
+                };
+                studyGroupDTO.studyGroupDaysDTO = studyGroupDays;
+            }
 
             result.Data = studyGroupDTO;
 
@@ -319,6 +345,29 @@ namespace EducationAPI.Services
                 studyGroup.WelcomeMessage = model.WelcomeMessage;
             if (!string.IsNullOrEmpty(model.YearSemester))
                 studyGroup.YearSemester = model.YearSemester;
+
+            //Check if days is null, if not then edit days
+            if (model.studyGroupDaysDTO != null)
+            {
+                if (studyGroup.StudyGroupDay != null || studyGroup.StudyGroupDay.FirstOrDefault() != null)
+                {
+                    var groupDays = studyGroup.StudyGroupDay.OrderByDescending(c => c.SrlNo).FirstOrDefault();
+                    
+                    groupDays.OnlineDay1 = model.studyGroupDaysDTO.OnlineDay1;
+                    groupDays.OnlineDay2 = model.studyGroupDaysDTO.OnlineDay2;
+                    groupDays.OnlineDay3 = model.studyGroupDaysDTO.OnlineDay3;
+                    groupDays.PhysicalDay = model.studyGroupDaysDTO.PhysicalDay;
+                    groupDays.SoftskillDay = model.studyGroupDaysDTO.SoftskillDay;
+                    groupDays.CoachingDay = model.studyGroupDaysDTO.CoachingDay;
+                    groupDays.EnglishDay = model.studyGroupDaysDTO.EnglishDay;
+
+                    groupDays.OnlineTimeInterval = model.studyGroupDaysDTO.OnlineTimeInterval;
+                    groupDays.PhysicalTimeInterval = model.studyGroupDaysDTO.PhysicalTimeInterval;
+                    groupDays.SoftskillTimeInterval = model.studyGroupDaysDTO.SoftskillTimeInterval;
+                    groupDays.CoachingTimeInterval = model.studyGroupDaysDTO.CoachingTimeInterval;
+                    groupDays.EnglishTimeInterval = model.studyGroupDaysDTO.EnglishTimeInterval;
+                }
+            }
 
             await _studyGroupRepository.Save();
 

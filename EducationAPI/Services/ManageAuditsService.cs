@@ -19,6 +19,7 @@ namespace EducationAPI.Services
         TrackRepository _tracksRepository = new TrackRepository();
         TrainingProviderRepository _trainingProviderRepository = new TrainingProviderRepository();
         AuditingSessionRepository _auditingSessionRepository = new AuditingSessionRepository();
+        AuditingSessionAttendanceRepository _auditingSessionAttendanceRepository = new AuditingSessionAttendanceRepository();
         AuthRepository _authRepository = new AuthRepository();
 
 
@@ -282,12 +283,11 @@ namespace EducationAPI.Services
             auditSession.SessionType = model.SessionType ?? auditSession.SessionType;
             auditSession.AttendanceType = model.AttendanceType ?? auditSession.AttendanceType;
 
-            if (model.StudentsAttendedList != null)
+            if (model.StudentsAttendedList != null && model.StudentsAttendedList.Count > 0)
             {
-                
-
                 if (auditSession.AuditingSessionAttendances != null || auditSession.AuditingSessionAttendances.Count() > 0)
                 {
+                    _auditingSessionAttendanceRepository.RemoveAll(auditSession.AuditingSessionAttendances.ToList());
                     ////var diff = auditSession.AuditingSessionAttendances.Where()
                     //foreach (var student in auditSession.AuditingSessionAttendances)
                     //{

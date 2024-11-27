@@ -36,5 +36,7 @@ public partial class StudyGroupDay
     public TimeOnly? CoachingTimeInterval { get; set; }
     public TimeOnly? EnglishTimeInterval { get; set; }
 
+    public virtual StudyGroup studyGroup { get; set; }
+
     //public virtual StudyGroup StudyGroup { get; set; };
 }

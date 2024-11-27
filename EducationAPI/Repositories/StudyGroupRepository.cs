@@ -35,6 +35,7 @@ namespace EducationAPI.Repositories
                 return await _context.StudyGroups.Where(c => c.GroupIntId == ID)
                     .Include(c => c.Instructor).DefaultIfEmpty()
                     .Include(c => c.Trainees).DefaultIfEmpty()
+                    .Include(c => c.StudyGroupDay).DefaultIfEmpty()
                     .FirstOrDefaultAsync();
             }
             catch (Exception ex)

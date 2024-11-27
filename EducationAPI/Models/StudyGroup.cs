@@ -56,6 +56,7 @@ public partial class StudyGroup
 
     public virtual ICollection<GroupSession> GroupSessions { get; set; }
 
+    public virtual ICollection<StudyGroupDay>? StudyGroupDay { get; set; }
     public virtual Instructor? Instructor { get; set; } 
 
     public virtual JobProfile? JobProfileInt { get; set; }

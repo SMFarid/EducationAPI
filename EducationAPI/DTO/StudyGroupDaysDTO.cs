@@ -2,6 +2,34 @@
 {
     public class StudyGroupDaysDTO
     {
+        public int StudyGroupId { get; set; }
 
+        public int? SrlNo { get; set; }
+
+        public string? OnlineDay1 { get; set; }
+
+        public string? OnlineDay2 { get; set; }
+
+        public string? OnlineDay3 { get; set; }
+
+        public string? PhysicalDay { get; set; }
+
+        public string? SoftskillDay { get; set; }
+
+        public string? CoachingDay { get; set; }
+
+        public string? EnglishDay { get; set; }
+
+        public DateTime? ActiveFrom { get; set; }
+
+        public DateTime? ActiveTo { get; set; }
+
+        public string RoundCode { get; set; }
+
+        public TimeOnly? OnlineTimeInterval { get; set; }
+        public TimeOnly? PhysicalTimeInterval { get; set; }
+        public TimeOnly? SoftskillTimeInterval { get; set; }
+        public TimeOnly? CoachingTimeInterval { get; set; }
+        public TimeOnly? EnglishTimeInterval { get; set; }
     }
 }

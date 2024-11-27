@@ -898,9 +898,14 @@ public partial class StudentDBContext : DbContext
             entity.HasOne(d => d.TrackIntNavigation).WithMany(p => p.StudyGroups)
                 .HasForeignKey(d => d.TrackIntId)
                 .HasConstraintName("FK_Study_Group_Track1");
+
             entity.HasMany(d => d.Trainees)
             .WithOne(d => d.StudyGroup)
             .HasForeignKey(d => d.GroupIntID);
+
+            entity.HasMany(d => d.StudyGroupDay)
+            .WithOne(d => d.studyGroup)
+            .HasForeignKey(d => d.StudyGroupId);
 
             //entity.HasOne(d => d.TrainingProvider).WithMany()
             //    .HasPrincipalKey(d => d.StudyGroupIntId);
@@ -909,16 +914,21 @@ public partial class StudentDBContext : DbContext
 
         modelBuilder.Entity<StudyGroupDay>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("Study_Group_Days");
+            //entity
+            //    .HasNoKey()
+            //    .ToTable("Study_Group_Days");
 
-            entity.Property(e => e.ActiveFrom)
-                .HasColumnType("datetime")
-                .HasColumnName("Active_From");
-            entity.Property(e => e.ActiveTo)
-                .HasColumnType("datetime")
-                .HasColumnName("Active_To");
+            entity.HasKey(e => e.StudyGroupId);
+
+            entity.ToTable("Study_Group_Days");
+
+            
+            entity.Property(e => e.RoundCode)
+                .HasMaxLength(50)
+                .HasColumnName("Round_Code");
+            entity.Property(e => e.SrlNo).HasColumnName("SrlNo");
+            entity.Property(e => e.StudyGroupId).HasColumnName("Study_Group_ID");
+
             entity.Property(e => e.CoachingDay)
                 .HasMaxLength(50)
                 .HasColumnName("Coaching_Day");
@@ -940,7 +950,29 @@ public partial class StudentDBContext : DbContext
             entity.Property(e => e.SoftskillDay)
                 .HasMaxLength(50)
                 .HasColumnName("Softskill_Day");
-            entity.Property(e => e.StudyGroupId).HasColumnName("Study_Group_ID");
+
+            entity.Property(e => e.ActiveFrom)
+                .HasColumnType("datetime")
+                .HasColumnName("Active_From");
+            entity.Property(e => e.ActiveTo)
+                .HasColumnType("datetime")
+                .HasColumnName("Active_To");
+
+            entity.Property(e => e.OnlineTimeInterval)
+                .HasColumnType("time")
+                .HasColumnName("Online_Time_Interval");
+            entity.Property(e => e.PhysicalTimeInterval)
+                .HasColumnType("time")
+                .HasColumnName("Physical_Time_Interval");
+            entity.Property(e => e.SoftskillTimeInterval)
+                .HasColumnType("time")
+                .HasColumnName("Softskill_Time_Interval");
+            entity.Property(e => e.CoachingTimeInterval)
+                .HasColumnType("time")
+                .HasColumnName("Coaching_Time_Interval");
+            entity.Property(e => e.EnglishTimeInterval)
+                .HasColumnType("time")
+                .HasColumnName("English_Time_Interval");
 
             //entity.HasOne(d => d.StudyGroup).WithMany()
             //    .HasForeignKey(d => d.StudyGroupId)

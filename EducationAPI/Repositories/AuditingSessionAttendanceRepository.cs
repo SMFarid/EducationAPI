@@ -19,5 +19,15 @@ namespace EducationAPI.Repositories
             return await _context.AuditingSessionAttendances.Where(e => e.SessionId == sessionID).ToListAsync();
         }
 
+        public void Remove(AuditingSessionAttendance attendee)
+        {    
+            _context.Remove(attendee);
+        }
+
+        public void RemoveAll(List<AuditingSessionAttendance> attendees)
+        {
+            _context.RemoveRange(attendees);
+        }
+
     }
 }
