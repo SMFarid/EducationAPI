@@ -45,5 +45,19 @@ namespace EducationAPI.Controllers
             return await _service.EditAuditingReport(model);
         }
 
+        [HttpPost]
+        [Route("AddAuditingReport")]
+        public async Task<CommonResponse<AuditSessionViewDTO>> AddAuditingReport(AddAuditSessionDTO model)
+        {
+            return await _service.AddAuditingReport(model);
+        }
+
+        [HttpGet]
+        [Route("GetCriteria")]
+        public async Task<CommonResponse<AuditingCriteriaModel>> GetAuditCriteria(int groupIntID)
+        {
+            return await _service.GetAuditingCriteria(groupIntID);
+        }
+
     }
 }

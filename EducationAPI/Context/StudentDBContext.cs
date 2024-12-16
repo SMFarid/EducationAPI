@@ -294,7 +294,21 @@ public partial class StudentDBContext : DbContext
             entity.Property(e => e.LastModified)
                 .HasColumnType("datetime")
                 .HasColumnName("Last_Modified");
-            
+
+            //Added 29/11/2024
+            entity.Property(e => e.IsCameraOpen)
+            .HasMaxLength(1)
+            .IsUnicode(false)
+            .HasColumnName("Is_Instructor_Camera_Open");
+
+            entity.Property(e => e.IsLastSessionExam)
+            .HasMaxLength(1)
+            .IsUnicode(false)
+            .HasColumnName("Last_Session_Exam");
+
+            entity.Property(e => e.InstructorPicturePath)
+                .HasMaxLength(150)
+                .HasColumnName("Instructor_Pic_Path");
 
 
             ///Relations->
@@ -671,6 +685,11 @@ public partial class StudentDBContext : DbContext
             entity.Property(e => e.UniversityName)
                 .HasMaxLength(50)
                 .HasColumnName("University_Name");
+            //Added 29/11/2024
+            entity.Property(e => e.InstructorPicPath)
+                .HasMaxLength(150)
+                .HasColumnName("Instructor_Pic_Path");
+            
         });
 
         modelBuilder.Entity<JobProfile>(entity =>

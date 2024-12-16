@@ -102,7 +102,11 @@ namespace EducationAPI.Services
                 if (studyGroup.Instructor != null)
                 {
                     criteria.Instructors.Add(
-                        new InstructorDTO() { Id = studyGroup.Instructor.InstructorIntId, NameEN = studyGroup.Instructor.NameEn });
+                        new InstructorDTO() { 
+                            Id = studyGroup.Instructor.InstructorIntId, 
+                            NameEN = studyGroup.Instructor.NameEn, 
+                            InstructorPicture = studyGroup.Instructor.InstructorPicPath 
+                        });
                 }
 
                 //criteria.SessionType = roundcodeAssignment.SessionType;
@@ -536,9 +540,6 @@ namespace EducationAPI.Services
                 var assignedSession = await _assignmentRepository.getAssignmentByID((int)auditingSession.AssignmentSessionID);
                 assignedSession.Conducted = (int)RoundCodeStates.Done;
 
-
-
-
                 auditingSession.AttendanceType = assignedSession.SessionType; //change later
                                                                               //Auditor = auditor,
                 auditingSession.AuditorId = model.AuditorId;
@@ -575,6 +576,8 @@ namespace EducationAPI.Services
                 auditingSession.CommentCategory = model.CommentCategory;
                 auditingSession.LastModified = DateTime.Now;
                 auditingSession.PresentationUsed = model.Presentation_Used;
+                auditingSession.IsCameraOpen = model.IsCameraOpen;
+                auditingSession.IsLastSessionExam = model.IsLastSessionExam;
 
 
                 var studentAttendance = new List<AuditingSessionAttendance>();

@@ -1,12 +1,12 @@
 ﻿namespace EducationAPI.DTO
 {
-    public class AuditSessionDTO
+    public class AddAuditSessionDTO
     {
-        public AuditSessionDTO() {
+        public AddAuditSessionDTO() {
             StudentsAttendedList = new List<AttendanceDTO>();
         }
-        public int Auditing_Session_ID { get; set; }
-        public int? Assignment_Session_ID { get; set; }
+        //public int Auditing_Session_ID { get; set; }
+        //public int? Assignment_Session_ID { get; set; }
         public int? AuditorId { get; set; }
         public string? RoundCode { get; set; }
         public int Study_Group_ID { get; set; }
@@ -40,6 +40,11 @@
         public bool? IsCameraOpen { get; set; }
         public bool? IsLastSessionExam { get; set; }
         public string? InstructorPicturePath { get; set; }
+        public DateTime? StartTime { get; set; }
+        public DateTime? EndTime { get; set; }
+        public DateTime? SessionDateTimeStart { get; set; }
+
+        public DateTime? SessionDateTimeClose { get; set; }
 
     }
 }

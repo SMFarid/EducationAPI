@@ -21,9 +21,21 @@ namespace EducationAPI.Repositories
             return result;
         }
 
-        public async Task<Trainee> getStudentByAppID(string studentID)
+        public async Task<Trainee> getStudentByEmail(string email)
         {
-            var result = await _context.Trainees.Where(e => e.StudentAppId == studentID).FirstOrDefaultAsync();
+            var result = await _context.Trainees.Where(e => e.Email == email).FirstOrDefaultAsync();
+            return result;
+        }
+
+        public async Task<IEnumerable<Trainee>> getStudentByGroup(int groupID)
+        {
+            var result = await _context.Trainees.Where(e => e.GroupIntID == groupID).ToListAsync();
+            return result;
+        }
+
+        public async Task<Trainee> getStudentByMobile(string mobile)
+        {
+            var result = await _context.Trainees.Where(e => e.Mobile == mobile).FirstOrDefaultAsync();
             return result;
         }
 

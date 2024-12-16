@@ -21,6 +21,15 @@ namespace EducationAPI.Repositories
             return result;
         }
 
+        public async Task<IEnumerable<StudyGroup>> getAllGroupsWTrainee()
+        {
+            var result = await _context.StudyGroups
+                .Include(c => c.Trainees)
+                .AsNoTracking()
+                .ToListAsync();
+            return result;
+        }
+
         public async Task<IEnumerable<StudyGroup>> getListOfGroups(List<int> IDsList)
         {
             var result = await _context.StudyGroups.Where(e => IDsList.Contains(e.GroupIntId)).ToListAsync();
@@ -75,7 +84,11 @@ namespace EducationAPI.Repositories
             //result.Trainees = temp;
             AuditingSessionCriteraDTO auditingSession = new AuditingSessionCriteraDTO();
             if (result.Instructor != null) {
-                auditingSession.Instructors.Add(new InstructorDTO() { Id = result.Instructor.InstructorIntId, NameEN = result.Instructor.NameEn});
+                auditingSession.Instructors.Add(new InstructorDTO() { 
+                    Id = result.Instructor.InstructorIntId, 
+                    NameEN = result.Instructor.NameEn,
+                    InstructorPicture = result.Instructor.InstructorPicPath,
+                });
             }
             
             auditingSession.SessionType = "Online";

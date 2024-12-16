@@ -2,7 +2,7 @@
 {
     public class StudyGroupDaysDTO
     {
-        public int StudyGroupId { get; set; }
+        public int? StudyGroupId { get; set; }
 
         public int? SrlNo { get; set; }
 
@@ -24,12 +24,12 @@
 
         public DateTime? ActiveTo { get; set; }
 
-        public string RoundCode { get; set; }
+        public string? RoundCode { get; set; }
 
-        public TimeOnly? OnlineTimeInterval { get; set; }
-        public TimeOnly? PhysicalTimeInterval { get; set; }
-        public TimeOnly? SoftskillTimeInterval { get; set; }
-        public TimeOnly? CoachingTimeInterval { get; set; }
-        public TimeOnly? EnglishTimeInterval { get; set; }
+        public DateTime? OnlineTimeInterval { get; set; }
+        public DateTime? PhysicalTimeInterval { get; set; }
+        public DateTime? SoftskillTimeInterval { get; set; }
+        public DateTime? CoachingTimeInterval { get; set; }
+        public DateTime? EnglishTimeInterval { get; set; }
     }
 }

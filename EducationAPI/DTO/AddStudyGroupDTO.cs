@@ -45,5 +45,6 @@
         public string? TraineeType { get; set; }
 
         public string? WeekDayEndFlag { get; set; }
+        public StudyGroupDaysDTO? studyGroupDaysDTO { get; set; }
     }
 }

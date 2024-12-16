@@ -47,6 +47,9 @@ public partial class Instructor
     public DateOnly? GraduationDate { get; set; }
 
     public Boolean Active { get; set; }
+    
+    //Added 29/11/2024
+    public string? InstructorPicPath { get; set; }
 
     public virtual ICollection<AuditingSession> AuditingSessions { get; set; } = new List<AuditingSession>();
 

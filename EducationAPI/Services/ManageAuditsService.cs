@@ -5,6 +5,7 @@ using EducationAPI.DTO;
 using EducationAPI.Enums;
 using EducationAPI.Models;
 using EducationAPI.Repositories;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.IdentityModel.Tokens;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace EducationAPI.Services
         AuditingSessionRepository _auditingSessionRepository = new AuditingSessionRepository();
         AuditingSessionAttendanceRepository _auditingSessionAttendanceRepository = new AuditingSessionAttendanceRepository();
         AuthRepository _authRepository = new AuthRepository();
+        InstructorsRepository _instructorsRepository = new InstructorsRepository();
 
 
         #region Study Group Management
@@ -282,6 +284,9 @@ namespace EducationAPI.Services
             auditSession.CommentCategory = model.CommentCategory ?? auditSession.CommentCategory;
             auditSession.SessionType = model.SessionType ?? auditSession.SessionType;
             auditSession.AttendanceType = model.AttendanceType ?? auditSession.AttendanceType;
+            auditSession.IsCameraOpen = model.IsCameraOpen ?? auditSession.IsCameraOpen;
+            auditSession.IsLastSessionExam = model.IsLastSessionExam ?? auditSession.IsLastSessionExam;
+            auditSession.InstructorPicturePath = model.InstructorPicturePath ?? auditSession.InstructorPicturePath;
 
             if (model.StudentsAttendedList != null && model.StudentsAttendedList.Count > 0)
             {
@@ -328,6 +333,114 @@ namespace EducationAPI.Services
 
             _auditingSessionRepository.Save();
             return await GetSingleAuditingSession(auditSession.SessionId);
+
+        }
+
+        public async Task<CommonResponse<AuditSessionViewDTO>> AddAuditingReport(AddAuditSessionDTO model)
+        {
+            var result = new CommonResponse<AuditSessionViewDTO>();
+
+            var auditSession = new AuditingSession();
+
+            var studyGroup = await _studyGroupRepository.getStudyGroupByIntID(model.Study_Group_ID);
+
+            if (studyGroup == null)
+            {
+                result.Errors.Add(new Error { Message = "Add Session Error: Group with ID: " + model.Study_Group_ID + " not found!" });
+                return result;
+            }
+
+            auditSession.AuditorId = model.AuditorId ?? auditSession.AuditorId;
+            auditSession.StudyGroupId = model.Study_Group_ID.ToString() ?? auditSession.StudyGroupId;
+            auditSession.Conducted = model.Conducted ?? auditSession.Conducted;
+            auditSession.MaterialDelivered = model.MaterialDelivered ?? auditSession.MaterialDelivered;
+            auditSession.LabFlag = model.Lab_Flag ?? auditSession.LabFlag;
+            auditSession.TestFlag = model.Test_Flag ?? auditSession.TestFlag;
+            auditSession.DepiLogoAdded = model.Depi_Logo_Flag ?? auditSession.DepiLogoAdded;
+            auditSession.CurrentChapter = model.Current_Chapter ?? auditSession.CurrentChapter;
+            auditSession.InstructorId = model.Instructor_ID ?? auditSession.InstructorId;
+            auditSession.InstructorName = model.OtherInstructorName ?? auditSession.InstructorName;
+            auditSession.ConnectionQuality = model.ConnectionQuality ?? auditSession.ConnectionQuality;
+            auditSession.VoiceQuality = model.VoiceQuality ?? auditSession.VoiceQuality;
+            auditSession.VideoQuality = model.VideoQuality ?? auditSession.VideoQuality;
+            auditSession.Remarks = model.Remarks ?? auditSession.Remarks;
+
+            auditSession.HardwareProficiency = model.HardwareProficiency ?? auditSession.HardwareProficiency;
+            auditSession.UnderstoodExamples = model.UnderstoodExamples ?? auditSession.UnderstoodExamples;
+            auditSession.UnderstoonExplaination = model.UnderstoonExplaination ?? auditSession.UnderstoonExplaination;
+            auditSession.TimeForQuestions = model.TimeForQuestions ?? auditSession.TimeForQuestions;
+            auditSession.InstructorEncouragement = model.InstructorEncouragement ?? auditSession.InstructorEncouragement;
+            auditSession.MaterialIsClear = model.MaterialIsClear ?? auditSession.MaterialIsClear;
+            auditSession.ACCondition = model.ACCondition ?? auditSession.ACCondition;
+            auditSession.CenterEnvironment = model.CenterEnvironment ?? auditSession.CenterEnvironment;
+            auditSession.InitiativeClear = model.InitiativeClear ?? auditSession.InitiativeClear;
+            auditSession.PrevLinks = model.PrevLinks ?? auditSession.PrevLinks;
+            auditSession.CommentCategory = model.CommentCategory ?? auditSession.CommentCategory;
+            auditSession.SessionType = model.SessionType ?? auditSession.SessionType;
+            auditSession.AttendanceType = model.AttendanceType ?? auditSession.AttendanceType;
+            auditSession.IsCameraOpen = model.IsCameraOpen ?? auditSession.IsCameraOpen;
+            auditSession.IsLastSessionExam = model.IsLastSessionExam ?? auditSession.IsLastSessionExam;
+            auditSession.InstructorPicturePath = model.InstructorPicturePath ?? auditSession.InstructorPicturePath;
+
+            auditSession.SessionDateTimeClose = model.SessionDateTimeClose ?? auditSession.SessionDateTimeClose;
+            auditSession.SessionDateTimeStart = model.SessionDateTimeStart ?? auditSession.SessionDateTimeStart;
+            auditSession.StartTime = model.StartTime != null ? TimeOnly.FromDateTime(model.StartTime.GetValueOrDefault()) :auditSession.StartTime;
+            auditSession.EndTime = model.EndTime != null ? TimeOnly.FromDateTime(model.EndTime.GetValueOrDefault()) : auditSession.EndTime;
+
+            if (model.StudentsAttendedList != null && model.StudentsAttendedList.Count > 0)
+            {
+                auditSession.AuditingSessionAttendances = new List<AuditingSessionAttendance>();
+                foreach (var sAttendance in model.StudentsAttendedList)
+                {
+
+                    var newAttendee = new AuditingSessionAttendance
+                    {
+                        presense = sAttendance.Present,
+                        StudentId = sAttendance.StudentID,
+                        SendDate = model.SessionDateTimeClose
+                    };
+                    var studentModel = await _studentRepository.getStudentByIntID(sAttendance.StudentID);
+                    newAttendee.StudentName = studentModel != null ? (studentModel.NameEn != null ? studentModel.NameEn : studentModel.NameAr) : "";
+                    auditSession.AuditingSessionAttendances.Add(newAttendee);
+
+                }
+            }
+
+            auditSession.LastModified = DateTime.Now;
+
+            await _auditingSessionRepository.Add(auditSession);
+            return await GetSingleAuditingSession(auditSession.SessionId);
+
+        }
+
+        public async Task<CommonResponse<AuditingCriteriaModel>> GetAuditingCriteria(int groupIntID)
+        {
+            var result = new CommonResponse<AuditingCriteriaModel>();
+            var instructorsList = await _instructorsRepository.getAllInstructors();
+            var auditors = await _authRepository.getAllAuditors();
+            var students = await _studentRepository.getStudentByGroup(groupIntID);
+
+            AuditingCriteriaModel model = new AuditingCriteriaModel();
+
+
+            foreach (var inst in instructorsList)
+            {
+                model.Instructors.Add(new CommonDTO { Id = inst.InstructorIntId.ToString(), Name = inst.NameEn, NameAr = inst.NameAr });
+            }
+
+            foreach (var auth in auditors)
+            {
+                model.Auditors.Add(new CommonDTO { Id = auth.Id.ToString(), Name = auth.Username, NameAr = auth.Username });
+            }
+
+            foreach (var student in students)
+            {
+                model.Students.Add(new CommonDTO { Id = student.TraineeIntId.ToString(), Name = student.NameEn, NameAr = student.NameAr });
+            }
+
+            result.Data = model;
+
+            return result;
 
         }
 

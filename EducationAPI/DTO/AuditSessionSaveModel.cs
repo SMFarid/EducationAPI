@@ -38,6 +38,10 @@
         public bool? InitiativeClear { get; set; }
         public bool? PrevLinks { get; set; }
         public string? CommentCategory { get; set; }
-        public String? SessionType { get; set; }
+        public string? SessionType { get; set; }
+        
+        //Added 29/11/2024
+        public bool? IsCameraOpen { get; set; }
+        public bool? IsLastSessionExam {  get; set; }
     }
 }

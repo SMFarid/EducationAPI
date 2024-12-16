@@ -47,6 +47,6 @@
 
         public string? WeekDayEndFlag { get; set; }
 
-        public StudyGroupDaysDTO studyGroupDaysDTO { get; set; }
+        public StudyGroupDaysDTO? studyGroupDaysDTO { get; set; }
     }
 }

@@ -34,6 +34,14 @@ namespace EducationAPI.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<AuditingSession>> getSessionsByGroupNoTrack(int groupID)
+        {
+            return await _context.AuditingSessions.Where(e => e.StudyGroupId == groupID.ToString())
+                .Include(e => e.AuditingSessionAttendances).DefaultIfEmpty()
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
         public async Task<string> Add(AuditingSession session)
         {
             try

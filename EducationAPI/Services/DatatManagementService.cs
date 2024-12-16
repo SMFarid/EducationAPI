@@ -3,6 +3,7 @@ using EducationAPI.Common;
 using EducationAPI.Domain;
 using EducationAPI.DTO;
 using EducationAPI.Enums;
+using EducationAPI.Models;
 using EducationAPI.Repositories;
 using Microsoft.IdentityModel.Tokens;
 using System.Collections.Generic;
@@ -16,6 +17,10 @@ namespace EducationAPI.Services
         ProviderStudyGroupRepository _providerStudyGroupRepository = new ProviderStudyGroupRepository();
         TrackRepository _tracksRepository = new TrackRepository();
         TrainingProviderRepository _trainingProviderRepository = new TrainingProviderRepository();
+        InstructorsRepository _instructorsRepository = new InstructorsRepository();
+        AuditingSessionRepository _sessionRepo = new AuditingSessionRepository();
+
+        int countRecords = 0;
 
         #region Student Management
         public async Task<CommonResponse<StudentViewModel>> EditStudent(StudentEditModel model)
@@ -73,17 +78,27 @@ namespace EducationAPI.Services
             var response = new CommonResponse<StudentViewModel>();
 
             //Validate
-            var student = await _studentRepository.getStudentByAppID(model.StudentAppID);
+            //var student = await _studentRepository.getStudentByAppID(model.StudentAppID);
+            var student = await _studentRepository.getStudentByEmail(model.Email);
 
             if (student != null)
             {
-                response.Errors.Add(new Error { Message = "Student with ID: " + model.StudentAppID + " already exists! " });
+                response.Errors.Add(new Error { Message = "Student with ID: " + model.Email + " already exists! " });
+                return response;
+            }
+
+            student = await _studentRepository.getStudentByMobile(model.Mobile);
+
+            if (student != null)
+            {
+                response.Errors.Add(new Error { Message = "Student with ID: " + model.Mobile + " already exists! " });
                 return response;
             }
 
             student = new Trainee();
             //Change details if found
-
+            if (!string.IsNullOrEmpty(model.StudentAppID))
+                student.StudentAppId = model.StudentAppID;
             if (!string.IsNullOrEmpty(model.SocialID))
                 student.SocialId = model.SocialID;
             if (!string.IsNullOrEmpty(model.NameEn))
@@ -432,6 +447,32 @@ namespace EducationAPI.Services
             if (!string.IsNullOrEmpty(model.YearSemester))
                 studyGroup.YearSemester = model.YearSemester;
 
+            if (model.studyGroupDaysDTO != null)
+            {
+                var studyGroupDays = new StudyGroupDay
+                {
+                    RoundCode = model.RoundCode,
+                    OnlineDay1 = model.studyGroupDaysDTO.OnlineDay1,
+                    OnlineDay2 = model.studyGroupDaysDTO.OnlineDay2,
+                    OnlineDay3 = model.studyGroupDaysDTO.OnlineDay3,
+                    PhysicalDay = model.studyGroupDaysDTO.PhysicalDay,
+                    EnglishDay = model.studyGroupDaysDTO.EnglishDay,
+                    SoftskillDay = model.studyGroupDaysDTO.SoftskillDay,
+                    CoachingDay = model.studyGroupDaysDTO.CoachingDay,
+                    OnlineTimeInterval = model.studyGroupDaysDTO.OnlineTimeInterval,
+                    PhysicalTimeInterval = model.studyGroupDaysDTO.PhysicalTimeInterval,
+                    EnglishTimeInterval = model.studyGroupDaysDTO.EnglishTimeInterval,
+                    CoachingTimeInterval = model.studyGroupDaysDTO.CoachingTimeInterval,
+                    SoftskillTimeInterval = model.studyGroupDaysDTO.SoftskillTimeInterval,
+                    SrlNo = 1,
+                    ActiveFrom = DateTime.Now
+                };
+
+                studyGroup.StudyGroupDay.Add(studyGroupDays);
+            }
+
+            
+
             _studyGroupRepository.Add(studyGroup);
             await _studyGroupRepository.Save();
 
@@ -446,6 +487,7 @@ namespace EducationAPI.Services
 
             var tracksList = await _tracksRepository.getAllTracks();
             var providersList = await _trainingProviderRepository.getAllProviders();
+            var instructorsList = await _instructorsRepository.getAllInstructors();
 
             GroupCriteriaModel model = new GroupCriteriaModel();
 
@@ -459,9 +501,49 @@ namespace EducationAPI.Services
                 model.Providers.Add(new CommonDTO { Id = provider.ProviderIntId.ToString(), Name = provider.NameEn, NameAr = provider.NameAr });
             }
 
+            foreach (var inst in instructorsList)
+            {
+                model.Instructors.Add(new CommonDTO { Id = inst.InstructorIntId.ToString(), Name = inst.NameEn, NameAr = inst.NameAr });
+            }
+
+
             result.Data = model;
 
             return result;
+        }
+
+        #endregion
+
+        #region ONE TIME
+        public async Task<int> EditGroupAttendance()
+        {
+
+            var allGroups = await _studyGroupRepository.getAllGroupsWTrainee();
+            
+            foreach (var group in allGroups)
+            {
+                var allAttendance = await _sessionRepo.getSessionsByGroupNoTrack(group.GroupIntId);
+                if (allAttendance != null && allAttendance.FirstOrDefault() != null) {
+                    foreach (var session in allAttendance)
+                    {
+                        if(session.AuditingSessionAttendances != null)
+                        {
+                            if (session.AuditingSessionAttendances.Count < group.Trainees.Count())
+                            {
+                                AddMissing(group.Trainees, session.AuditingSessionAttendances.ToList());
+                            }
+                        }
+                    }
+                }
+            }
+            Console.WriteLine("Missing records: " + countRecords);
+            return countRecords;
+        }
+
+        private void AddMissing (List<Trainee> trainees, List<AuditingSessionAttendance> sessionAttendances)
+        {
+            var missingTrainees = trainees.Where(c => !sessionAttendances.Select(x => x.StudentId).Contains(c.TraineeIntId)).ToList();
+            countRecords += missingTrainees.Count();
         }
 
         #endregion

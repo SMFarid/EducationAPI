@@ -96,6 +96,11 @@ public partial class AuditingSession
     public string? Remarks { get; set; }
     public DateTime? LastModified { get; set; }
 
+    //Added 29/11/2024
+    public bool? IsCameraOpen { get; set; }
+    public bool? IsLastSessionExam { get; set; }
+    public string? InstructorPicturePath {  get; set; }
+
 
     //public virtual AuditorRoundCodeAssignment auditorRoundCodeAssignment { get; set; }
 
