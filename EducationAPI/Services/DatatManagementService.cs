@@ -17,6 +17,7 @@ namespace EducationAPI.Services
         ProviderStudyGroupRepository _providerStudyGroupRepository = new ProviderStudyGroupRepository();
         TrackRepository _tracksRepository = new TrackRepository();
         TrainingProviderRepository _trainingProviderRepository = new TrainingProviderRepository();
+        JobProfileRepository _jobProfileRepository = new JobProfileRepository();
         InstructorsRepository _instructorsRepository = new InstructorsRepository();
         AuditingSessionRepository _sessionRepo = new AuditingSessionRepository();
 
@@ -65,6 +66,10 @@ namespace EducationAPI.Services
                 student.Status = model.Status;
             if (model.Active != null)
                 student.Active = (bool)model.Active;
+            if (model.ModifiedUser != null)
+                student.ModifiedUser = model.ModifiedUser;
+            student.ModifiedDate = DateTime.Now;
+
 
             await _studentRepository.Save();
 
@@ -125,6 +130,11 @@ namespace EducationAPI.Services
                 student.Status = model.Status;
             if (model.Active != null)
                 student.Active = (bool)model.Active;
+            if (model.ModifiedUser != null)
+                student.ModifiedUser = model.ModifiedUser;
+            
+            student.CreatedDate = DateTime.Now;
+            student.ModifiedDate = DateTime.Now;
 
             _studentRepository.Add(student);
             await _studentRepository.Save();
@@ -176,6 +186,9 @@ namespace EducationAPI.Services
             studentModel.Status = student.Status;
 
             studentModel.Active = (bool)student.Active;
+            studentModel.ModifiedDate = student.ModifiedDate;
+            studentModel.CreatedDate = student.CreatedDate;
+            studentModel.ModifiedUser = student.ModifiedUser;
 
             response.Data = studentModel;
 
@@ -244,7 +257,7 @@ namespace EducationAPI.Services
             if (provider == null)
             {
                 result.Errors.Add(new Common.Error { Message = "Error: Unable to find provider for this group" });
-                //return response;
+                return result;
             }
 
 
@@ -268,36 +281,41 @@ namespace EducationAPI.Services
                 StudyGroupType = studyGroup.StudyGroupType,
                 TrackCode = studyGroup.TrackCode,
                 //TrackIntId = studyGroup.TrackIntId,
-                Provider = provider.ProviderName,
+                Provider = provider!= null ? provider.ProviderName: "not assigned",
                 TraineeType = studyGroup.TraineeType,
                 WeekDayEndFlag = studyGroup.WeekDayEndFlag,
                 WelcomeMessage = studyGroup.WelcomeMessage,
-                YearSemester = studyGroup.YearSemester
+                YearSemester = studyGroup.YearSemester,
+                Status = studyGroup.Status,
+                StatusComment = studyGroup.StatusComment,
+                StatStatusCommentCatID = studyGroup.StatStatusCommentCatIDusComment
             };
 
-            if (studyGroup.StudyGroupDay != null || studyGroup.StudyGroupDay.FirstOrDefault() != null )
+            if (studyGroup.StudyGroupDays != null || studyGroup.StudyGroupDays.FirstOrDefault() != null )
             {
-                var schedule = studyGroup.StudyGroupDay.OrderByDescending(c => c.SrlNo).FirstOrDefault();
-
-                var studyGroupDays = new StudyGroupDaysDTO
+                var schedule = studyGroup.StudyGroupDays.OrderByDescending(c => c.SrlNo).FirstOrDefault();
+                if (schedule != null)
                 {
-                    StudyGroupId = schedule.StudyGroupId,
-                    RoundCode = schedule.RoundCode,
-                    OnlineDay1 = schedule.OnlineDay1,
-                    OnlineDay2 = schedule.OnlineDay2,
-                    OnlineDay3 = schedule.OnlineDay3,
-                    PhysicalDay = schedule.PhysicalDay,
-                    SoftskillDay = schedule.SoftskillDay,
-                    CoachingDay = schedule.CoachingDay,
-                    EnglishDay = schedule.EnglishDay,
+                    var studyGroupDays = new StudyGroupDaysDTO
+                    {
+                        StudyGroupId = schedule.StudyGroupId,
+                        RoundCode = schedule.RoundCode,
+                        OnlineDay1 = schedule.OnlineDay1,
+                        OnlineDay2 = schedule.OnlineDay2,
+                        OnlineDay3 = schedule.OnlineDay3,
+                        PhysicalDay = schedule.PhysicalDay,
+                        SoftskillDay = schedule.SoftskillDay,
+                        CoachingDay = schedule.CoachingDay,
+                        EnglishDay = schedule.EnglishDay,
 
-                    OnlineTimeInterval = schedule.OnlineTimeInterval,
-                    PhysicalTimeInterval = schedule.PhysicalTimeInterval,
-                    SoftskillTimeInterval = schedule.SoftskillTimeInterval,
-                    CoachingTimeInterval = schedule.CoachingTimeInterval,
-                    EnglishTimeInterval = schedule.EnglishTimeInterval
-                };
-                studyGroupDTO.studyGroupDaysDTO = studyGroupDays;
+                        OnlineTimeInterval = schedule.OnlineTimeInterval,
+                        PhysicalTimeInterval = schedule.PhysicalTimeInterval,
+                        SoftskillTimeInterval = schedule.SoftskillTimeInterval,
+                        CoachingTimeInterval = schedule.CoachingTimeInterval,
+                        EnglishTimeInterval = schedule.EnglishTimeInterval
+                    };
+                    studyGroupDTO.studyGroupDaysDTO = studyGroupDays;
+                }
             }
 
             result.Data = studyGroupDTO;
@@ -361,12 +379,51 @@ namespace EducationAPI.Services
             if (!string.IsNullOrEmpty(model.YearSemester))
                 studyGroup.YearSemester = model.YearSemester;
 
-            //Check if days is null, if not then edit days
-            if (model.studyGroupDaysDTO != null)
+            if (model.Status!= null)
+                studyGroup.Status = model.Status;
+            if (!string.IsNullOrEmpty(model.StatusComment))
+                studyGroup.StatusComment = model.StatusComment;
+            
+            if (model.StatStatusCommentCatID != null)
+                studyGroup.StatStatusCommentCatIDusComment = model.StatStatusCommentCatID;
+
+            //Edit Provider
+            if (model.Provider != null)
             {
-                if (studyGroup.StudyGroupDay != null || studyGroup.StudyGroupDay.FirstOrDefault() != null)
+                var provider = await _trainingProviderRepository.getProviderByID((int)model.Provider);
+                if (provider == null)
                 {
-                    var groupDays = studyGroup.StudyGroupDay.OrderByDescending(c => c.SrlNo).FirstOrDefault();
+                    result.Errors.Add(new Error { Message = "Add Group Error : Provider with ID: " + model.Provider + " Not found" });
+                    return result;
+                }
+                var providerLink = await _providerStudyGroupRepository.getProviderbyStudyGroup(model.GroupIntId);
+                if (providerLink == null)
+                {
+                    var providerStudyGroup = new ProviderStudyGroup
+                    {
+                        ProviderId = model.Provider,
+                        ProviderName = provider.NameEn,
+                        RoundCode = model.RoundCode,
+                        Remarks = "Link Created : " + DateTime.Now,
+                        YearSemester = DateTime.Now.Year,
+                        //StudyGroupIntId = studyGroup.GroupIntId,
+                        //StudyGroup = studyGroup
+                    };
+                    studyGroup.TrainingProvider = providerStudyGroup;
+                } else
+                {
+                    providerLink.ProviderId = model.Provider;
+                }
+
+            }
+                
+
+            //Check if days is null, if not then edit days
+            if (model.studyGroupDaysDTO != null && model.studyGroupDaysDTO.StudyGroupId == model.GroupIntId)
+            {
+                if (studyGroup.StudyGroupDays != null || studyGroup.StudyGroupDays.FirstOrDefault() != null)
+                {
+                    var groupDays = studyGroup.StudyGroupDays.OrderByDescending(c => c.SrlNo).FirstOrDefault();
                     
                     groupDays.OnlineDay1 = model.studyGroupDaysDTO.OnlineDay1;
                     groupDays.OnlineDay2 = model.studyGroupDaysDTO.OnlineDay2;
@@ -399,10 +456,11 @@ namespace EducationAPI.Services
 
             if (studyGroup != null)
             {
-                result.Errors.Add(new Error { Message = "EDIT: Group with ID: " + model.RoundCode + " Already exists!" });
+                result.Errors.Add(new Error { Message = "Add Group Error : Group with ID: " + model.RoundCode + " Already exists!" });
                 return result;
             }
             studyGroup = new StudyGroup();
+            ProviderStudyGroup providerStudyGroup = null;
             if (!string.IsNullOrEmpty(model.RoundCode))
                 studyGroup.RoundCode = model.RoundCode;
 
@@ -446,6 +504,13 @@ namespace EducationAPI.Services
                 studyGroup.WelcomeMessage = model.WelcomeMessage;
             if (!string.IsNullOrEmpty(model.YearSemester))
                 studyGroup.YearSemester = model.YearSemester;
+            if (model.Status != null)
+                studyGroup.Status = model.Status;
+            if (!string.IsNullOrEmpty(model.StatusComment))
+                studyGroup.StatusComment = model.StatusComment;
+            
+            if (model.StatStatusCommentCatID != null)
+                studyGroup.StatStatusCommentCatIDusComment = model.StatStatusCommentCatID;
 
             if (model.studyGroupDaysDTO != null)
             {
@@ -468,15 +533,47 @@ namespace EducationAPI.Services
                     ActiveFrom = DateTime.Now
                 };
 
-                studyGroup.StudyGroupDay.Add(studyGroupDays);
+                studyGroup.StudyGroupDays.Add(studyGroupDays);
             }
 
-            
-
             _studyGroupRepository.Add(studyGroup);
+
+            //if (studyGroup.GroupIntId != null && studyGroup.GroupIntId != 0)
+            //{
+                if (model.Provider.HasValue)
+                {
+                    var provider = await _trainingProviderRepository.getProviderByID((int)model.Provider);
+                    if (provider == null)
+                    {
+                        result.Errors.Add(new Error { Message = "Add Group Error : Provider with ID: " + model.Provider + " Not found" });
+                        return result;
+                    }
+                    providerStudyGroup = new ProviderStudyGroup
+                    {
+                        ProviderId = model.Provider,
+                        ProviderName = provider.NameEn,
+                        RoundCode = model.RoundCode,
+                        Remarks = "Link Created : " + DateTime.Now,
+                        YearSemester = DateTime.Now.Year,
+                        //StudyGroupIntId = studyGroup.GroupIntId,
+                        //StudyGroup = studyGroup
+                    };
+                    studyGroup.TrainingProvider = providerStudyGroup;
+                    //studyGroup.TrainingProvider = providerStudyGroup;
+                    //if (providerStudyGroup != null)
+                    //_providerStudyGroupRepository.Add(providerStudyGroup);
+                    //_providerStudyGroupRepository.Save(providerStudyGroup);
+                }
+            //}
             await _studyGroupRepository.Save();
 
             result = await GetGroupDetails(studyGroup.GroupIntId);
+            //}
+            //else
+            //{
+            //    result.Errors.Add(new Error { Message = "Error saving Group" });
+            //    return result;
+            //}
 
             return result;
         }
@@ -488,6 +585,7 @@ namespace EducationAPI.Services
             var tracksList = await _tracksRepository.getAllTracks();
             var providersList = await _trainingProviderRepository.getAllProviders();
             var instructorsList = await _instructorsRepository.getAllInstructors();
+            var jobProfilesList = await _jobProfileRepository.getAllJobProfiles();
 
             GroupCriteriaModel model = new GroupCriteriaModel();
 
@@ -522,7 +620,9 @@ namespace EducationAPI.Services
             
             foreach (var group in allGroups)
             {
-                var allAttendance = await _sessionRepo.getSessionsByGroupNoTrack(group.GroupIntId);
+                DateTime startT = new DateTime(2024, 11, 3);
+                DateTime endT = new DateTime(2024, 11, 16);
+                var allAttendance = await _sessionRepo.getSessionsByGroupNoTrack(group.GroupIntId, startT, endT);
                 if (allAttendance != null && allAttendance.FirstOrDefault() != null) {
                     foreach (var session in allAttendance)
                     {
@@ -530,20 +630,81 @@ namespace EducationAPI.Services
                         {
                             if (session.AuditingSessionAttendances.Count < group.Trainees.Count())
                             {
-                                AddMissing(group.Trainees, session.AuditingSessionAttendances.ToList());
+                                AddMissing(group.Trainees, session);
                             }
                         }
                     }
                 }
             }
             Console.WriteLine("Missing records: " + countRecords);
+            await _sessionRepo.Save();
             return countRecords;
         }
 
-        private void AddMissing (List<Trainee> trainees, List<AuditingSessionAttendance> sessionAttendances)
+        private void AddMissing (List<Trainee> trainees, AuditingSession session)
         {
-            var missingTrainees = trainees.Where(c => !sessionAttendances.Select(x => x.StudentId).Contains(c.TraineeIntId)).ToList();
-            countRecords += missingTrainees.Count();
+            if (trainees != null && trainees.Count > 0)
+            {
+                var missingTrainees = trainees.Where(c => !session.AuditingSessionAttendances.Select(x => x.StudentId).Contains(c.TraineeIntId)).ToList();
+                foreach (var trainee in missingTrainees)
+                {
+                    var attendence = new AuditingSessionAttendance
+                    {
+                        presense = false,
+                        StudentId = trainee.TraineeIntId,
+                        StudentName = !trainee.NameEn.IsNullOrEmpty() ? trainee.NameEn : trainee.NameAr,
+                        SessionId = session.SessionId,
+                        SendDate = session.SessionDateTimeStart,
+                        auditingSession = session
+                    };
+                    session.AuditingSessionAttendances.Add(attendence);
+                }
+                countRecords += missingTrainees.Count();
+            }
+        }
+
+        public async Task<int> AddAssignmentsForSessions()
+        {
+            DateTime start = new DateTime(2024, 10, 25);
+            DateTime end = new DateTime(2024, 11, 02);
+            var allsessions = await _sessionRepo.getSessionsByDate(start, end);
+            countRecords = 0;
+
+            //FindDuplicates(allsessions);
+            foreach (var session in allsessions)
+            {
+                if (session.AssignmentSessionID == null)
+                {
+                    if (session.CourseName != "u")
+                    {
+                        var studyGroup = await _studyGroupRepository.getStudyGroupByIntID(int.Parse(session.StudyGroupId));
+                        var assignment = new AuditorRoundCodeAssignment
+                        {
+                            AuditingSessionID = session.SessionId,
+                            AuditorId = session.AuditorId,
+                            Conducted = (int)RoundCodeStates.Done,
+                            Date = (DateTime)(session.SessionDateTimeStart != null ? session.SessionDateTimeStart : new DateTime()),
+                            GroupIntID = int.Parse(session.StudyGroupId),
+                            SessionType = session.SessionType,
+                            StudyGroupRoundCode = studyGroup.RoundCode
+                        };
+                        session.AuditorRoundCodeAssignment = assignment;
+                        countRecords++;
+                    }
+                }
+            }
+            Console.WriteLine("Missing assignments: " + countRecords);
+            await _sessionRepo.Save();
+            return countRecords;
+        }
+
+        public List<int> FindDuplicates(List<AuditingSession> auditingSessions)
+        {
+            //var result =  auditingSessions.GroupBy(i => new { i.SessionDateTimeStart, i.StudyGroupId, i.SessionType })
+            //         .Where(x => x.Count() > 1)
+            //         .Select(val => val.Key).ToList();
+            var result = auditingSessions.Distinct().ToList();
+            return null;
         }
 
         #endregion

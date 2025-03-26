@@ -8,7 +8,8 @@ public partial class StudyGroup
     public StudyGroup() {
         GroupSessions = new List<GroupSession>();
         StudyGroupSessions = new List<StudyGroupSession>();
-
+        StudyGroupDays = new List<StudyGroupDay>();
+        Trainees = new List<Trainee>();
     }
     public string RoundCode { get; set; }
 
@@ -54,9 +55,13 @@ public partial class StudyGroup
 
     public string? WeekDayEndFlag { get; set; }
 
+    public bool? Status { get; set; }
+    public string? StatusComment { get; set; }
+    public int? StatStatusCommentCatIDusComment { get; set; }
+
     public virtual ICollection<GroupSession> GroupSessions { get; set; }
 
-    public virtual ICollection<StudyGroupDay>? StudyGroupDay { get; set; }
+    public virtual ICollection<StudyGroupDay>? StudyGroupDays { get; set; }
     public virtual Instructor? Instructor { get; set; } 
 
     public virtual JobProfile? JobProfileInt { get; set; }
@@ -66,7 +71,7 @@ public partial class StudyGroup
     public virtual TrackProvider? TrackInt { get; set; }
 
     public virtual Track? TrackIntNavigation { get; set; }
-    //public virtual ProviderStudyGroup? TrainingProvider {  get; set; }
+    public virtual ProviderStudyGroup? TrainingProvider { get; set; }
     public List<Trainee>? Trainees { get; set; } 
     //public virtual TrainingProvider trainingProvider { get; set; }
 }

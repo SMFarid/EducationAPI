@@ -17,7 +17,7 @@ namespace EducationAPI.Repositories
 
         public async Task<IEnumerable<StudyGroup>> getAllGroups()
         {
-            var result = await _context.StudyGroups.ToListAsync();
+            var result = await _context.StudyGroups.Where(c => c.Status == true).ToListAsync();
             return result;
         }
 
@@ -38,21 +38,12 @@ namespace EducationAPI.Repositories
 
         public async Task<StudyGroup> getStudyGroupByIntID(int ID)
         {
-
-            try
-            {
                 return await _context.StudyGroups.Where(c => c.GroupIntId == ID)
                     .Include(c => c.Instructor).DefaultIfEmpty()
                     .Include(c => c.Trainees).DefaultIfEmpty()
-                    .Include(c => c.StudyGroupDay).DefaultIfEmpty()
+                    .Include(c => c.StudyGroupDays).DefaultIfEmpty()
                     .FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-
-                return null;
-            }
+ 
         }
 
         public async Task<StudyGroup> getStudyGroupByCode(string ID)

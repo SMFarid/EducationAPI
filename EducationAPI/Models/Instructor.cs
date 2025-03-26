@@ -8,15 +8,15 @@ public partial class Instructor
 {
     public int InstructorIntId { get; set; }
 
-    public string SocialId { get; set; } = null!;
+    public string? SocialId { get; set; } = null!;
 
-    public string NameEn { get; set; } = null!;
+    public string? NameEn { get; set; } = null!;
 
     public string? NameAr { get; set; }
 
-    public string Gender { get; set; } = null!;
+    public string? Gender { get; set; } = null!;
 
-    public DateOnly Dob { get; set; }
+    public DateOnly? Dob { get; set; }
 
     public string? Address { get; set; }
 
@@ -26,7 +26,7 @@ public partial class Instructor
 
     public string? Email { get; set; }
 
-    public string Mobile { get; set; } = null!;
+    public string? Mobile { get; set; } = null!;
 
     public string? Phone { get; set; }
 
@@ -46,7 +46,7 @@ public partial class Instructor
 
     public DateOnly? GraduationDate { get; set; }
 
-    public Boolean Active { get; set; }
+    public Boolean? Active { get; set; }
     
     //Added 29/11/2024
     public string? InstructorPicPath { get; set; }

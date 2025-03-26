@@ -53,8 +53,10 @@ namespace EducationAPI.Services
         public async Task<CommonResponse<IEnumerable<AuditSessionViewDTO>>> GetRoundCodeAudits(int groupIntID)
         {
             var result = new CommonResponse<IEnumerable<AuditSessionViewDTO>>();
+            StudyGroup studyGroup;
 
-            var studyGroup = await _studyGroupRepository.getStudyGroupByIntID(groupIntID);
+            studyGroup = await _studyGroupRepository.getStudyGroupByIntID(groupIntID);
+
 
             if (studyGroup == null)
             {
@@ -70,7 +72,7 @@ namespace EducationAPI.Services
             }
 
             var groupAudits = await _auditingSessionRepository.getSessionsByGroup(groupIntID);
-            if (groupAudits == null || groupAudits.Count() == 0 )
+            if (groupAudits == null || groupAudits.Count() == 0)
             {
                 result.Errors.Add(new Common.Error { Message = "Error: Unable to find sessions for this group" });
                 return result;
@@ -84,48 +86,56 @@ namespace EducationAPI.Services
 
             //map from DB to DTO
             Auth auditor = new Auth();
-            var sessionsList = new  List<AuditSessionViewDTO>();
+            var sessionsList = new List<AuditSessionViewDTO>();
             foreach (var session in groupAudits)
             {
                 if (session != null)
                 {
+                    AuditSessionViewDTO auditSession = null ;
                     auditor = await _authRepository.GetAuditorById(session.AuditorId);
-                    var auditSession = new AuditSessionViewDTO
+                    try
                     {
-                        RoundCode = studyGroup.RoundCode,
-                        ACCondition = session.ACCondition,
-                        Assignment_Session_ID = (int)session.AssignmentSessionID,
-                        Auditing_Session_ID = session.SessionId,
-                        AuditorId = session.AuditorId,
-                        AuditorName = auditor != null ? auditor.Username : "",
-                        CenterEnvironment = session.CenterEnvironment,
-                        CommentCategory = session.CommentCategory,
-                        Conducted = (bool)session.Conducted,
-                        ConnectionQuality = session.ConnectionQuality,
-                        Current_Chapter = session.CurrentChapter,
-                        Depi_Logo_Flag = (bool)session.DepiLogoAdded,
-                        HardwareProficiency = session.HardwareProficiency,
-                        InitiativeClear = (bool)session.InitiativeClear,
-                        InstructorEncouragement = session.InstructorEncouragement,
-                        InstructorName = session.InstructorName,
-                        Instructor_ID = session.InstructorId,
-                        Lab_Flag = (bool)session.LabFlag,
-                        MaterialDelivered = (bool)session.MaterialDelivered,
-                        MaterialIsClear = (bool)session.MaterialIsClear,
-                        PrevLinks = (bool)session.PrevLinks,
-                        Remarks = session.Remarks,
-                        SessionType = session.SessionType,
-                        Study_Group_ID = int.Parse(session.StudyGroupId),
-                        Test_Flag = (bool)session.TestFlag,
-                        TimeForQuestions = session.TimeForQuestions,
-                        UnderstoodExamples = session.UnderstoodExamples,
-                        UnderstoonExplaination = session.UnderstoonExplaination,
-                        VideoQuality = session.VideoQuality,
-                        VoiceQuality = session.VoiceQuality,
-                        Date = (DateTime)session.SessionDateTimeStart,
-                        AttendanceType = session.AttendanceType,
-                        LastModified = session.LastModified
-                    };
+                        auditSession = new AuditSessionViewDTO
+                        {
+                            RoundCode = studyGroup.RoundCode,
+                            ACCondition = session.ACCondition,
+                            Assignment_Session_ID = session.AssignmentSessionID,
+                            Auditing_Session_ID = session.SessionId,
+                            AuditorId = session.AuditorId,
+                            AuditorName = auditor != null ? auditor.Username : "",
+                            CenterEnvironment = session.CenterEnvironment,
+                            CommentCategory = session.CommentCategory,
+                            Conducted = session.Conducted,
+                            ConnectionQuality = session.ConnectionQuality,
+                            Current_Chapter = session.CurrentChapter,
+                            Depi_Logo_Flag = session.DepiLogoAdded,
+                            HardwareProficiency = session.HardwareProficiency,
+                            InitiativeClear = session.InitiativeClear,
+                            InstructorEncouragement = session.InstructorEncouragement,
+                            InstructorName = session.InstructorName,
+                            Instructor_ID = session.InstructorId,
+                            Lab_Flag = session.LabFlag,
+                            MaterialDelivered = session.MaterialDelivered,
+                            MaterialIsClear = session.MaterialIsClear,
+                            PrevLinks = session.PrevLinks,
+                            Remarks = session.Remarks,
+                            SessionType = session.SessionType,
+                            Study_Group_ID = int.Parse(session.StudyGroupId),
+                            Test_Flag = session.TestFlag,
+                            TimeForQuestions = session.TimeForQuestions,
+                            UnderstoodExamples = session.UnderstoodExamples,
+                            UnderstoonExplaination = session.UnderstoonExplaination,
+                            VideoQuality = session.VideoQuality,
+                            VoiceQuality = session.VoiceQuality,
+                            Date = session.SessionDateTimeStart,
+                            AttendanceType = session.AttendanceType,
+                            LastModified = session.LastModified
+                        };
+                    }
+                    catch (Exception ex)
+                    {
+                        result.Errors.Add(new Error { Message = ex.Message });
+                    }
                     var attendanceList = session.AuditingSessionAttendances;
 
                     //auditSession.StudentsAttendedList.AddRange(session.AuditingSessionAttendances.
@@ -140,15 +150,14 @@ namespace EducationAPI.Services
                             StudentID = item.StudentId
                         });
                     }
-
-                    sessionsList.Add(auditSession);
+                   
+                        sessionsList.Add(auditSession);
+                    
+                    
                 }
             }
-
-            ;
-
-
             result.Data = sessionsList.OrderByDescending(x => x.Date);
+
 
             return result;
         }
@@ -287,6 +296,8 @@ namespace EducationAPI.Services
             auditSession.IsCameraOpen = model.IsCameraOpen ?? auditSession.IsCameraOpen;
             auditSession.IsLastSessionExam = model.IsLastSessionExam ?? auditSession.IsLastSessionExam;
             auditSession.InstructorPicturePath = model.InstructorPicturePath ?? auditSession.InstructorPicturePath;
+            auditSession.NumberOfPC = model.NumberOfPC ?? auditSession.NumberOfPC;
+            auditSession.NumberOfPCComment = model.NumberOfPCComment ?? auditSession.NumberOfPCComment;
 
             if (model.StudentsAttendedList != null && model.StudentsAttendedList.Count > 0)
             {
@@ -317,7 +328,7 @@ namespace EducationAPI.Services
                             {
                                 presense = sAttendance.Present,
                                 StudentId = sAttendance.StudentID,
-                                SendDate = auditSession.LastModified,
+                                SendDate = auditSession.SessionDateTimeStart,
                                 SessionId = auditSession.SessionId,
                                 
                             };
@@ -381,6 +392,9 @@ namespace EducationAPI.Services
             auditSession.IsCameraOpen = model.IsCameraOpen ?? auditSession.IsCameraOpen;
             auditSession.IsLastSessionExam = model.IsLastSessionExam ?? auditSession.IsLastSessionExam;
             auditSession.InstructorPicturePath = model.InstructorPicturePath ?? auditSession.InstructorPicturePath;
+            
+            auditSession.NumberOfPC = model.NumberOfPC ?? auditSession.NumberOfPC;
+            auditSession.NumberOfPCComment = model.NumberOfPCComment ?? auditSession.NumberOfPCComment;
 
             auditSession.SessionDateTimeClose = model.SessionDateTimeClose ?? auditSession.SessionDateTimeClose;
             auditSession.SessionDateTimeStart = model.SessionDateTimeStart ?? auditSession.SessionDateTimeStart;
@@ -408,7 +422,7 @@ namespace EducationAPI.Services
 
             auditSession.LastModified = DateTime.Now;
 
-            await _auditingSessionRepository.Add(auditSession);
+            await _auditingSessionRepository.SaveSession(auditSession);
             return await GetSingleAuditingSession(auditSession.SessionId);
 
         }

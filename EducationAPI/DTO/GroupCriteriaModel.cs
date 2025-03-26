@@ -9,10 +9,12 @@ namespace EducationAPI.DTO
             Tracks = new List<CommonDTO>();
             Providers = new List<CommonDTO>();
             Instructors = new List<CommonDTO>();
+            JobProfiles = new List<CommonDTO>();
         }
 
         public List<CommonDTO> Tracks { get; set; }
         public List<CommonDTO> Providers { get; set; }
         public List<CommonDTO> Instructors { get; set; }
+        public List<CommonDTO> JobProfiles { get; set; }
     }
 }

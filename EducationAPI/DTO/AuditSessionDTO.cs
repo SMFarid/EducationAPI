@@ -40,6 +40,8 @@
         public bool? IsCameraOpen { get; set; }
         public bool? IsLastSessionExam { get; set; }
         public string? InstructorPicturePath { get; set; }
+        public int? NumberOfPC {  get; set; }
+        public string? NumberOfPCComment { get; set; }
 
     }
 }

@@ -30,11 +30,11 @@ public partial class StudyGroupDay
 
     public string RoundCode { get; set;}
 
-    public DateTime? OnlineTimeInterval { get; set; }
-    public DateTime? PhysicalTimeInterval { get; set; }
-    public DateTime? SoftskillTimeInterval { get; set; }
-    public DateTime? CoachingTimeInterval { get; set; }
-    public DateTime? EnglishTimeInterval { get; set; }
+    public TimeSpan? OnlineTimeInterval { get; set; }
+    public TimeSpan? PhysicalTimeInterval { get; set; }
+    public TimeSpan? SoftskillTimeInterval { get; set; }
+    public TimeSpan? CoachingTimeInterval { get; set; }
+    public TimeSpan? EnglishTimeInterval { get; set; }
 
     public virtual StudyGroup studyGroup { get; set; }
 

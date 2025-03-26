@@ -66,6 +66,13 @@ namespace EducationAPI.Controllers
         //    return await _managementService.EditGroupAttendance();
         //}
 
+        //[HttpPost]
+        //[Route("AddAssignmentsForSessions")]
+        //public async Task<int> AddAssignmentsForSessions()
+        //{
+        //    return await _managementService.AddAssignmentsForSessions();
+        //}
+
         [HttpPost]
         [Route("AddGroup")]
         public async Task<CommonResponse<ViewStudyGroupDTO>> AddGroup(AddStudyGroupDTO model)

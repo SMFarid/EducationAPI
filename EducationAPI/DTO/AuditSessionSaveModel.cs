@@ -43,5 +43,9 @@
         //Added 29/11/2024
         public bool? IsCameraOpen { get; set; }
         public bool? IsLastSessionExam {  get; set; }
+        
+        //Added 04/02/2025
+        public int? NumberOfPC {  get; set; }
+        public string? NumberOfPCComment { get; set; }
     }
 }

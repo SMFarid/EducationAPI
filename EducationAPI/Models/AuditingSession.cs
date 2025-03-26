@@ -101,6 +101,10 @@ public partial class AuditingSession
     public bool? IsLastSessionExam { get; set; }
     public string? InstructorPicturePath {  get; set; }
 
+    //Added 03/02/2025
+    public int? NumberOfPC { get; set; }
+    public string? NumberOfPCComment { get; set; }
+
 
     //public virtual AuditorRoundCodeAssignment auditorRoundCodeAssignment { get; set; }
 
@@ -113,4 +117,5 @@ public partial class AuditingSession
     public virtual TrainingProvider? Provider { get; set; }
 
     public virtual ICollection<AuditingSessionAttendance>? AuditingSessionAttendances { get; set; }
+    public virtual AuditorRoundCodeAssignment? AuditorRoundCodeAssignment { get; set; }
 }

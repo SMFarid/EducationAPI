@@ -15,11 +15,12 @@ public partial class Auth
 
     public bool Active { get; set; }
 
-    public int Role { get; set; }
+    public string Role { get; set; }
+    public int? RoleType { get; set; }
 
     public virtual ICollection<DailyAuditorsAttendance> DailyAuditorsAttendances { get; set; } = new List<DailyAuditorsAttendance>();
 
-    public virtual Role RoleNavigation { get; set; } = null!;
+    //public virtual Role RoleNavigation { get; set; } = null!;
 
     public virtual ICollection<UserProfile> UserProfiles { get; set; } = new List<UserProfile>();
     //public virtual ICollection<AuditingSession> AuditingSessions { get; set; } = new List<AuditingSession>();

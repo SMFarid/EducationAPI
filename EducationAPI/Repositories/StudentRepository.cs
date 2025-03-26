@@ -23,7 +23,7 @@ namespace EducationAPI.Repositories
 
         public async Task<Trainee> getStudentByEmail(string email)
         {
-            var result = await _context.Trainees.Where(e => e.Email == email).FirstOrDefaultAsync();
+            var result = await _context.Trainees.Where(e => e.Email.ToLower() == email.ToLower()).FirstOrDefaultAsync();
             return result;
         }
 

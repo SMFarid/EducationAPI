@@ -19,6 +19,13 @@ namespace EducationAPI.Repositories
             return await _context.AuditingSessions.Where(e => e.AssignmentSessionID == assignmentID).FirstOrDefaultAsync();
         }
 
+        public async Task<List<AuditingSession>> getSessionsByDate(DateTime start, DateTime end)
+        {
+            return await _context.AuditingSessions.Where(e => e.SessionDateTimeStart >= start && e.SessionDateTimeStart <= end)
+                //.AsNoTracking()
+                .ToListAsync();
+        }
+
         public async Task<AuditingSession> getSessionBySessionID(int sessionID)
         {
             return await _context.AuditingSessions.Where(e => e.SessionId == sessionID)
@@ -34,11 +41,12 @@ namespace EducationAPI.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<AuditingSession>> getSessionsByGroupNoTrack(int groupID)
+        public async Task<List<AuditingSession>> getSessionsByGroupNoTrack(int groupID, DateTime d1, DateTime d2)
         {
             return await _context.AuditingSessions.Where(e => e.StudyGroupId == groupID.ToString())
+                .Where(e => e.SessionDateTimeStart >= d1 && e.SessionDateTimeStart <= d2)
                 .Include(e => e.AuditingSessionAttendances).DefaultIfEmpty()
-                .AsNoTracking()
+                //.AsNoTracking()
                 .ToListAsync();
         }
 

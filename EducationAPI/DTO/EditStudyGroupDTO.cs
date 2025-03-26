@@ -9,7 +9,7 @@
         public string? TrackCode { get; set; }
 
         public int GroupIntId { get; set; }
-        public string? Provider { get; set; }
+        public int? Provider { get; set; }
 
         public int? JobProfileIntId { get; set; }
 
@@ -46,6 +46,9 @@
         public string? TraineeType { get; set; }
 
         public string? WeekDayEndFlag { get; set; }
+        public bool? Status { get; set; }
+        public string? StatusComment { get; set; }
+        public int? StatStatusCommentCatID { get; set; }
 
         public StudyGroupDaysDTO? studyGroupDaysDTO { get; set; }
     }

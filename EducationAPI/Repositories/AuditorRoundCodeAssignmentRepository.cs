@@ -30,12 +30,38 @@ namespace EducationAPI.Repositories
 
         public async Task<IEnumerable<AuditorRoundCodeAssignment>> getAssignmentsByDate(DateTime date)
         {
+            try
+            {
+
+                var result = await _context.AuditorRoundCodeAssignments.Where(c => c.Date.Date == date.Date).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date
+
+                return result;
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<AuditorRoundCodeAssignment>> getAssignmentsByDateShifted(DateTime date)
+        {
             //var 
             try
             {
-                var result = await _context.AuditorRoundCodeAssignments.Where(c => c.Date.Date == date.Date).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date
+                var absoluteDayDate = date.Date;//.AddDays(-1);
+
+                if (date < absoluteDayDate.AddHours(4)) {
+                    absoluteDayDate = absoluteDayDate.AddDays(-1);
+                }
+                
+                //var minusOffset = absoluteDayDate.AddHours(-4);
+                var minusOffset = absoluteDayDate.AddHours(28);
+                //var plusOffset = absoluteDayDate.AddHours(-28);
+                //var result = await _context.AuditorRoundCodeAssignments.Where(c => c.Date.Date == date.Date).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date
+                var result = await _context.AuditorRoundCodeAssignments.Where(c => c.Date >= minusOffset.AddDays(-1) && c.Date <= minusOffset).ToListAsync();
                 return result;
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
@@ -65,7 +91,24 @@ namespace EducationAPI.Repositories
         {
             try
             {
-                var result = await _context.AuditorRoundCodeAssignments.Where(e => e.Date.Date == date.Date)//e.Conducted != (int)RoundCodeStates.Done 
+                //var absoluteDayDate = date.Date.AddDays(-1);
+                //var minusOffset = absoluteDayDate.AddHours(4);
+                //var plusOffset = absoluteDayDate.AddHours(28);
+                var absoluteDayDate = date.Date;
+
+                if (date < absoluteDayDate.AddHours(4))
+                {
+                    absoluteDayDate = absoluteDayDate.AddDays(-1);
+                }
+
+                var minusOffset = absoluteDayDate.AddHours(28);
+                //var plusOffset = absoluteDayDate.AddHours(-28);
+                //var result = await _context.AuditorRoundCodeAssignments.Where(c => c.Date.Date == date.Date).ToListAsync(); //null check  && c.Date.Value.Date  == date.Date
+
+
+                //var result = await _context.AuditorRoundCodeAssignments.Where(e => e.Date.Date == date.Date)//e.Conducted != (int)RoundCodeStates.Done 
+                //var result = await _context.AuditorRoundCodeAssignments.Where(c => c.Date <= plusOffset && c.Date >= minusOffset)
+                var result = await _context.AuditorRoundCodeAssignments.Where(c => c.Date >= minusOffset.AddDays(-1) && c.Date <= minusOffset)
                 .Where(e=> e.AuditorId == AuditorID)
                 .ToListAsync();
 

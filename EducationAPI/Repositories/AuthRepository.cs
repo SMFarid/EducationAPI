@@ -28,7 +28,7 @@ namespace EducationAPI.Repositories
 
         public async Task<List<Auth>> getAllAuditors()
         {
-            var result = await _context.Auths.Where(c=>c.Role == 4).OrderBy(c => c.Id).ToListAsync();
+            var result = await _context.Auths.Where(c=>c.RoleType == 4).OrderBy(c => c.Id).ToListAsync();
             return result;
         }
     }

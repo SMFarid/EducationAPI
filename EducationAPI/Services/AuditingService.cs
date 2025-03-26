@@ -93,7 +93,7 @@ namespace EducationAPI.Services
                 roundcodeAssignment.AuditorId = Audtor_ID;
                 roundcodeAssignment.Conducted = (int)RoundCodeStates.InProgress;
 
-                var students = studyGroup.Trainees != null ? studyGroup.Trainees.ToList() : new List<Trainee>();
+                var students = studyGroup.Trainees != null ? studyGroup.Trainees.Where(c => c.Active == true).ToList() : new List<Trainee>();
 
                 criteria.Students = students.Select(c => new StudentDTO { Id = c.TraineeIntId, NameAr = c.NameAr, NameEN = c.NameEn, Email = c.Email }).OrderBy(c => c.NameAr).ToList();
 
@@ -183,26 +183,32 @@ namespace EducationAPI.Services
         {
             var response = new CommonResponse<List<AuditorGroupsDTO>>();
             List<AuditorGroupsDTO> auditorGroups = new List<AuditorGroupsDTO>();
-
-            var roundcodeList = await _assignmentRepository.getAuditorAssignment(AuditorID, date); //edit to use only date and state
-            //List<int> groupIDsList = roundcodeList.Select(e => e.GroupIntID).ToList();
-            //var studyGroups = await _studyGroupRepository.getListOfGroups(groupIDsList);
-            foreach (var item in roundcodeList)
+            try
             {
-                var provider = await _providerStudyGroupRepository.getProviderbyStudyGroup((int)item.GroupIntID);
-                auditorGroups.Add(new AuditorGroupsDTO
+                var roundcodeList = await _assignmentRepository.getAuditorAssignment(AuditorID, date); //edit to use only date and state
+                                                                                                       //List<int> groupIDsList = roundcodeList.Select(e => e.GroupIntID).ToList();
+                                                                                                       //var studyGroups = await _studyGroupRepository.getListOfGroups(groupIDsList);
+                foreach (var item in roundcodeList)
                 {
-                    Doneflag = item.Conducted,
-                    RoundCode = item.StudyGroupRoundCode,
-                    SessionDateTime = item.Date.ToShortTimeString(),
-                    GroupIntID = item.GroupIntID!= null? (int)item.GroupIntID: 0,
-                    SessionType = item.SessionType!=null ? item.SessionType :"",
-                    TrainingProvider = provider!= null? provider.ProviderName: "",
-                    AssignmentID = item.AssignmentSessionID
-                });
+                    var provider = await _providerStudyGroupRepository.getProviderbyStudyGroup((int)item.GroupIntID);
+                    auditorGroups.Add(new AuditorGroupsDTO
+                    {
+                        Doneflag = item.Conducted,
+                        RoundCode = item.StudyGroupRoundCode,
+                        SessionDateTime = item.Date.ToShortTimeString(),
+                        GroupIntID = item.GroupIntID != null ? (int)item.GroupIntID : 0,
+                        SessionType = item.SessionType != null ? item.SessionType : "",
+                        TrainingProvider = provider != null ? provider.ProviderName : "",
+                        AssignmentID = item.AssignmentSessionID
+                    });
 
+                }
+                response.Data = auditorGroups.OrderBy(e => e.SessionDateTime).ToList();
+            }catch (Exception ex)
+            {
+                response.Errors.Add(new Error { Message = ex.Message });
+                return response;
             }
-            response.Data = auditorGroups.OrderBy(e=>e.SessionDateTime).ToList();
             return response;
         }
 
@@ -578,6 +584,8 @@ namespace EducationAPI.Services
                 auditingSession.PresentationUsed = model.Presentation_Used;
                 auditingSession.IsCameraOpen = model.IsCameraOpen;
                 auditingSession.IsLastSessionExam = model.IsLastSessionExam;
+                auditingSession.NumberOfPC = model.NumberOfPC;
+                auditingSession.NumberOfPCComment = model.NumberOfPCComment;
 
 
                 var studentAttendance = new List<AuditingSessionAttendance>();
@@ -588,39 +596,41 @@ namespace EducationAPI.Services
 
                 //var old_attendance = await _aud
                 //var sessionAttendance = await _auditingSessionAttendanceRepo.getAttendanceBySessionID(auditingSession.SessionId);
-                var sessionAttendance = auditingSession.AuditingSessionAttendances;
-                if (sessionAttendance == null || sessionAttendance.Count() == 0)
+                if (model.StudentsAttendedList != null && model.StudentsAttendedList.Count > 0)
                 {
-                    foreach (var item in students)
+                    var sessionAttendance = auditingSession.AuditingSessionAttendances;
+                    if (sessionAttendance == null || sessionAttendance.Count() == 0)
                     {
-                        var singleAttendance = model.StudentsAttendedList.Where(c => c.StudentID == item.TraineeIntId).FirstOrDefault();
-                        var student = new AuditingSessionAttendance
+                        foreach (var item in students)
                         {
-                            auditingSession = auditingSession,
-                            StudentId = item.TraineeIntId,
-                            StudentName = !string.IsNullOrEmpty(item.NameEn) ? item.NameEn : item.NameAr,
-                            SessionId = auditingSession.SessionId,
-                            SendDate = DateTime.Now,
-                            presense = singleAttendance.Present
-                        };
-                        studentAttendance.Add(student);
+                            var singleAttendance = model.StudentsAttendedList.Where(c => c.StudentID == item.TraineeIntId).FirstOrDefault();
+                            var student = new AuditingSessionAttendance
+                            {
+                                auditingSession = auditingSession,
+                                StudentId = item.TraineeIntId,
+                                StudentName = !string.IsNullOrEmpty(item.NameEn) ? item.NameEn : item.NameAr,
+                                SessionId = auditingSession.SessionId,
+                                SendDate = DateTime.Now,
+                                presense = singleAttendance.Present
+                            };
+                            studentAttendance.Add(student);
+                        }
+                        auditingSession.AuditingSessionAttendances = studentAttendance;
                     }
-                    auditingSession.AuditingSessionAttendances = studentAttendance;
-                }
-                else
-                {
-                    foreach (var item in sessionAttendance)
+                    else
                     {
-                        var singleAttendance = model.StudentsAttendedList.Where(c => c.StudentID == item.StudentId).FirstOrDefault();
+                        foreach (var item in sessionAttendance)
+                        {
+                            var singleAttendance = model.StudentsAttendedList.Where(c => c.StudentID == item.StudentId).FirstOrDefault();
 
-                        item.SendDate = DateTime.Now;
-                        item.presense = singleAttendance.Present;
-   
+                            item.SendDate = DateTime.Now;
+                            item.presense = singleAttendance.Present;
+
+                        }
+                        auditingSession.AuditingSessionAttendances = (ICollection<AuditingSessionAttendance>?)sessionAttendance;
                     }
-                    auditingSession.AuditingSessionAttendances = (ICollection<AuditingSessionAttendance>?)sessionAttendance;
                 }
                 
-
 
                 _assignmentRepository.Save();
                 response = await _auditingSessionRepository.Save();
@@ -731,8 +741,13 @@ namespace EducationAPI.Services
             var response = new CommonResponse<List<RoundCodeAssignmentDTO>>();
             List<RoundCodeAssignmentDTO> StudyGroups = new List<RoundCodeAssignmentDTO>();
 
-            var assignedCodes = await _assignmentRepository.getAssignmentsByDate(DateTime.Now);
-            assignedCodes = assignedCodes.OrderBy(c=> c.Date).ToList();
+            var assignedCodes = await _assignmentRepository.getAssignmentsByDateShifted(DateTime.Now);
+            if (assignedCodes == null)
+            {
+                response.Errors.Add(new Error { Message = "Error: No Assigned codes found" });
+                return response;
+            }
+            assignedCodes = assignedCodes.OrderBy(c => c.Date).ToList();
 
             if (assignedCodes != null)
             {
@@ -749,13 +764,13 @@ namespace EducationAPI.Services
                         Status = 1,
                         AssignmentDate = code.Date,
                         AuditorID = code.AuditorId,
-                        AuditorName = auditor != null ? auditor.Username: "",
+                        AuditorName = auditor != null ? auditor.Username : "",
                         Conducted = code.Conducted,
                         StatusName = Enum.GetName(typeof(RoundCodeStates), code.Conducted),
                         GroupIntID = code.GroupIntID,
-                        SessionType = code.SessionType != null ? code.SessionType.ToString() :"",
+                        SessionType = code.SessionType != null ? code.SessionType.ToString() : "",
                         TrainingProvider = provider != null ? provider.ProviderName : ""
-                    }) ;
+                    });
                 }
             }
 
@@ -779,13 +794,14 @@ namespace EducationAPI.Services
                             Status = 0,
                             GroupIntID = code.GroupIntId,
                             SessionType = "",
-                            TrainingProvider = provider!= null? provider.ProviderName: ""
+                            TrainingProvider = provider != null ? provider.ProviderName : ""
                         });
                     }
                 }
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-                response.Errors.Add(new Error { Message = "Error: " + ex.Message});
+                response.Errors.Add(new Error { Message = "Error: " + ex.Message });
                 return response;
             }
 

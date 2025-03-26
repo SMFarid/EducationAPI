@@ -98,12 +98,13 @@ public partial class StudentDBContext : DbContext
 
     //private readonly StreamWriter _logStream = new StreamWriter("mylog.txt", append: true);
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    { 
+    {
         
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        //=> optionsBuilder.UseSqlServer("Server=CALIBARN;Database=DEPI4;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;User ID=sherin;Password=P@ssw0rd"
+        //=> optionsBuilder.UseSqlServer("Server=CALIBARN;Database=DEPI6;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;User ID=sherin;Password=P@ssw0rd"
         //=> optionsBuilder.UseSqlServer("Server=DESKTOP-GBPLSPS;Database=DEPI2;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;User ID=sherin;Password=P@ssw0rd"
         => optionsBuilder.UseSqlServer("Server=DEPI-DB;Database=DEPI;Trusted_Connection=False;Encrypt=False;TrustServerCertificate=True;Integrated Security=False;User ID=depiDBUser;Password=P@ssw0rd"
+        //=> optionsBuilder.UseSqlServer("Server=CLON-DEPI-DB;Database=DEPI;Trusted_Connection=False;Encrypt=False;TrustServerCertificate=True;Integrated Security=False;User ID=depiDBUser;Password=P@ssw0rd"
         ////=> optionsBuilder.UseSqlServer("DATA SOURCE=10.0.27.100:1433/DEPI-DB;Database=DEPI;Trusted_Connection=False;Encrypt=False;TrustServerCertificate=True;Integrated Security=False;User ID=depiDBUser;Password=P@ssw0rd"
             , options => options.EnableRetryOnFailure())
         .EnableSensitiveDataLogging()
@@ -310,11 +311,19 @@ public partial class StudentDBContext : DbContext
                 .HasMaxLength(150)
                 .HasColumnName("Instructor_Pic_Path");
 
+            //Added 03-02-2025
+            entity.Property(e => e.NumberOfPC)
+                .HasColumnName("Number_Of_PC");
+
+            entity.Property(e => e.NumberOfPCComment)
+                .HasMaxLength(200)
+                .HasColumnName("Number_Of_PC_Comment");
+
 
             ///Relations->
             ///
-            //entity.HasOne(d => d.auditorRoundCodeAssignment).WithMany()
-            //    .HasForeignKey(e =>e.);
+            entity.HasOne(d => d.AuditorRoundCodeAssignment).WithMany()
+                .HasForeignKey(e => e.AssignmentSessionID);
 
             //entity.HasOne(d => d.Auditor).WithMany(p => p.AuditingSessions)
             //    .HasForeignKey(d => d.AuditorId)
@@ -327,6 +336,9 @@ public partial class StudentDBContext : DbContext
             entity.HasOne(d => d.Instructor).WithMany(p => p.AuditingSessions)
                 .HasForeignKey(d => d.InstructorId)
                 .HasConstraintName("FK_Auditing_Session_Instructor");
+
+            //entity.HasOne(d => d.StudyGroup).WithMany()
+            //    .HasForeignKey(d => d.StudyGroupId);
 
             //entity.HasMany(e => e.AuditingSessionAttendances).WithOne()
             //.HasForeignKey(e => e.SessionId);
@@ -355,8 +367,8 @@ public partial class StudentDBContext : DbContext
             entity.Property(e => e.presense).HasColumnName("presense").HasColumnType("Bit");
 
             entity.HasOne(e => e.auditingSession).WithMany(e => e.AuditingSessionAttendances)
-            .HasPrincipalKey(e => e.SessionId)
-            .HasConstraintName("FK_Auditing_Session_Attendance_Auditing_Session");
+            .HasPrincipalKey(e => e.SessionId);
+            //.HasConstraintName("FK_Auditing_Session_Attendance_Auditing_Session");
         });
 
         modelBuilder.Entity<Auditor>(entity =>
@@ -787,9 +799,10 @@ public partial class StudentDBContext : DbContext
         modelBuilder.Entity<ProviderStudyGroup>(entity =>
         {
             entity
-                .HasNoKey()
-                .ToTable("Provider_Study_Group");
+                .HasKey(e => e.IntId);
+            entity.ToTable("Provider_Study_Group");
 
+            entity.Property(e => e.IntId).HasColumnName("Int_ID");
             entity.Property(e => e.ProviderId).HasColumnName("Provider_ID");
             entity.Property(e => e.Remarks).HasMaxLength(100).HasColumnName("Remarks");
             entity.Property(e => e.StudyGroupIntId).HasColumnName("Study_Group_Int_ID");
@@ -802,9 +815,12 @@ public partial class StudentDBContext : DbContext
             entity.HasOne(d => d.Provider).WithMany()
                 .HasForeignKey(d => d.ProviderId)
                 .HasConstraintName("FK_Provider_Study_Group_Training_Provider");
+            
+            //entity.HasOne(d => d.StudyGroup).WithMany()
+            //    .HasForeignKey(d => d.StudyGroupIntId);
 
-            //entity.HasOne(d => d.StudyGroupInt).WithMany()
-            //    .HasForeignKey(d => d.StudyGroupIntId)
+            //entity.HasOne<StudyGroup>().WithOne(d => d.TrainingProvider)
+            //    .HasForeignKey<StudyGroup>(d => d.GroupIntId)
             //    .HasConstraintName("FK_Provider_Study_Group_Study_Group");
         });
 
@@ -845,6 +861,8 @@ public partial class StudentDBContext : DbContext
             entity.HasKey(e => e.GroupIntId);
 
             entity.ToTable("Study_Group");
+            entity.ToTable(tb => tb.HasTrigger("trg_Study_Group_Changes"));
+            
 
             entity.Property(e => e.GroupIntId).HasColumnName("Group_Int_ID");
             entity.Property(e => e.Capacity).HasColumnType("numeric(18, 0)");
@@ -898,9 +916,19 @@ public partial class StudentDBContext : DbContext
                 .IsFixedLength()
                 .HasColumnName("Week_Day_End_Flag");
             entity.Property(e => e.WelcomeMessage).HasColumnName("Welcome_Message");
+            
             entity.Property(e => e.YearSemester)
                 .HasMaxLength(50)
                 .HasColumnName("Year_Semester");
+
+            entity.Property(e => e.Status).HasColumnName("Status");
+            entity.Property(e => e.StatusComment)
+                .HasMaxLength(200)
+                .HasColumnName("Status_Comment");
+            
+            entity.Property(e => e.StatStatusCommentCatIDusComment)
+                .HasColumnName("Status_Comment_Cat_ID");
+
 
             entity.HasOne(d => d.Instructor).WithMany(p => p.StudyGroups)
                 .HasForeignKey(d => d.InstructorId)
@@ -922,13 +950,17 @@ public partial class StudentDBContext : DbContext
             .WithOne(d => d.StudyGroup)
             .HasForeignKey(d => d.GroupIntID);
 
-            entity.HasMany(d => d.StudyGroupDay)
+            entity.HasMany(d => d.StudyGroupDays)
             .WithOne(d => d.studyGroup)
             .HasForeignKey(d => d.StudyGroupId);
+            
+            entity.HasOne(d => d.TrainingProvider)
+            .WithOne(d =>d.StudyGroup)
+            .HasForeignKey<ProviderStudyGroup>(d => d.StudyGroupIntId);
 
-            //entity.HasOne(d => d.TrainingProvider).WithMany()
-            //    .HasPrincipalKey(d => d.StudyGroupIntId);
-            //    //.HasConstraintName("FK_Provider_Study_Group_Study_Group");
+            //entity.HasOne(d => d.TrainingProvider).WithOne(d => d.StudyGroup)
+            //    .HasForeignKey<ProviderStudyGroup>(d => d.StudyGroupIntId)
+            //.HasConstraintName("FK_Provider_Study_Group_Study_Group");
         });
 
         modelBuilder.Entity<StudyGroupDay>(entity =>
@@ -1090,6 +1122,7 @@ public partial class StudentDBContext : DbContext
             entity.HasKey(e => e.TraineeIntId).HasName("PK_Student");
 
             entity.ToTable("Trainee");
+            entity.ToTable(tb => tb.HasTrigger("trg_Trainee_Changes"));
 
             entity.Property(e => e.TraineeIntId).HasColumnName("Trainee_INT_ID");
             entity.Property(e => e.Address).HasMaxLength(300);
@@ -1126,6 +1159,10 @@ public partial class StudentDBContext : DbContext
                 .HasColumnName("Study_Governorate");
             entity.Property(e => e.TrackId).HasColumnName("Track_ID");
             entity.Property(e => e.GroupIntID).HasColumnName("Group_Int_ID");
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime").HasColumnName("CreatedDate");
+            entity.Property(e => e.ModifiedDate).HasColumnType("datetime").HasColumnName("ModifiedDate");
+            entity.Property(e => e.ModifiedUser).HasColumnName("ModifiedUser");
+
 
             entity.HasOne(d => d.Track).WithMany(p => p.Trainees)
                 .HasForeignKey(d => d.TrackId)
@@ -1257,16 +1294,19 @@ public partial class StudentDBContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("password_hash");
             entity.Property(e => e.Role)
-                .HasDefaultValueSql("(NULL)")
+                .HasMaxLength(50)
                 .HasColumnName("role");
             entity.Property(e => e.Username)
                 .HasMaxLength(100)
                 .HasColumnName("username");
+            //Added 04/02/2024
+            entity.Property(e => e.RoleType).HasColumnName("role_type");
 
-            entity.HasOne(d => d.RoleNavigation).WithMany(p => p.Auths)
-                .HasForeignKey(d => d.Role)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Auth_roles");
+
+            //entity.HasOne(d => d.RoleNavigation).WithMany(p => p.Auths)
+            //    .HasForeignKey(d => d.Role)
+            //    .OnDelete(DeleteBehavior.ClientSetNull)
+            //    .HasConstraintName("FK_Auth_roles");
         });
 
         modelBuilder.Entity<DailyAuditorsAttendance>(entity =>

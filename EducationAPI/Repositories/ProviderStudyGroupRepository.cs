@@ -20,5 +20,14 @@ namespace EducationAPI.Repositories
 
             return result;
         }
+
+        public void Add(ProviderStudyGroup providerStudyGroup)
+        {
+            _context.Add(providerStudyGroup);
+        }
+        public void Save(ProviderStudyGroup providerStudyGroup)
+        {
+            _context.SaveChanges();
+        }
     }
 }

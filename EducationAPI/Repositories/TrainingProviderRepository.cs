@@ -17,5 +17,11 @@ namespace EducationAPI.Repositories
             var res = await _context.TrainingProviders.ToListAsync();
             return res;
         }
+
+        public async Task<TrainingProvider> getProviderByID(int providerID)
+        {
+            var res = await _context.TrainingProviders.Where(c => c.ProviderIntId == providerID).FirstOrDefaultAsync();
+            return res;
+        }
     }
 }

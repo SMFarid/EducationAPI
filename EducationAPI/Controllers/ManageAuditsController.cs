@@ -33,7 +33,15 @@ namespace EducationAPI.Controllers
         [Route("GetRoundCodeAudits")]
         public async Task<CommonResponse<IEnumerable<AuditSessionViewDTO>>> GetRoundCodeAudits(int StudyGroupId)
         {
-            return await _service.GetRoundCodeAudits(StudyGroupId);
+            //try
+            //{
+                return await _service.GetRoundCodeAudits(StudyGroupId);
+            //} catch (Exception ex)
+            //{
+            //    CommonResponse<IEnumerable<AuditSessionViewDTO>> response = new CommonResponse<IEnumerable<AuditSessionViewDTO>>();
+            //    response.Errors.Add(new Error { Message = ex.Message });
+            //    return response;
+            //}
         }
 
         ///Manage Study Groups

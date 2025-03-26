@@ -46,6 +46,9 @@
         public string? TraineeType { get; set; }
 
         public string? WeekDayEndFlag { get; set; }
+        public bool? Status { get; set; }
+        public string? StatusComment { get; set; }
+        public int? StatStatusCommentCatID { get; set; }
         public StudyGroupDaysDTO? studyGroupDaysDTO { get; set; }
     }
 }

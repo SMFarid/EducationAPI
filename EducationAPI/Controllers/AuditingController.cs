@@ -33,6 +33,7 @@ namespace EducationAPI.Controllers
         [Route("GetAuditorGroups")]
         public async Task<CommonResponse<List<AuditorGroupsDTO>>> GetAuditorGroups(int auditor_ID)
         {
+            //Gets list of Assignments for chosen Auditor
             return await auditingService.getAuditorGroups(auditor_ID, DateTime.Now);
         }
 
@@ -74,6 +75,7 @@ namespace EducationAPI.Controllers
         [Route("GetAuditorsList")]
         public async Task<CommonResponse<List<AuditorDTO>>> GetAuditorsList(int user_id)
         {
+            //Gets List of Auditors
             return await auditingService.getAuditorList(user_id);
         }
 
@@ -125,7 +127,7 @@ namespace EducationAPI.Controllers
         [Route("DeleteRoundCodeAssignment")]
         public async Task<CommonResponse<string>> DeleteRoundCodeAssignment(EditAssignmentModel model)
         {
-            var result = await auditingService.EditAuditAssignment(model);
+            var result = await auditingService.DeleteAuditAssignment(model);
             return result;
         }
     }
