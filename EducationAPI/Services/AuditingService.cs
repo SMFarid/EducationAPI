@@ -185,6 +185,7 @@ namespace EducationAPI.Services
             List<AuditorGroupsDTO> auditorGroups = new List<AuditorGroupsDTO>();
             try
             {
+                //Change to shifted for Ramadan
                 var roundcodeList = await _assignmentRepository.getAuditorAssignment(AuditorID, date); //edit to use only date and state
                                                                                                        //List<int> groupIDsList = roundcodeList.Select(e => e.GroupIntID).ToList();
                                                                                                        //var studyGroups = await _studyGroupRepository.getListOfGroups(groupIDsList);
@@ -741,7 +742,7 @@ namespace EducationAPI.Services
             var response = new CommonResponse<List<RoundCodeAssignmentDTO>>();
             List<RoundCodeAssignmentDTO> StudyGroups = new List<RoundCodeAssignmentDTO>();
 
-            var assignedCodes = await _assignmentRepository.getAssignmentsByDateShifted(DateTime.Now);
+            var assignedCodes = await _assignmentRepository.getAssignmentsByDate(DateTime.Now);
             if (assignedCodes == null)
             {
                 response.Errors.Add(new Error { Message = "Error: No Assigned codes found" });

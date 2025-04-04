@@ -91,6 +91,25 @@ namespace EducationAPI.Repositories
         {
             try
             {
+               
+
+                var result = await _context.AuditorRoundCodeAssignments.Where(e => e.Date.Date == date.Date)//e.Conducted != (int)RoundCodeStates.Done 
+                .Where(e => e.AuditorId == AuditorID)
+                .ToListAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.Out.WriteLine(ex.ToString());
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<AuditorRoundCodeAssignment>> getAuditorAssignmentShifted(int AuditorID, DateTime date)
+        {
+            try
+            {
                 //var absoluteDayDate = date.Date.AddDays(-1);
                 //var minusOffset = absoluteDayDate.AddHours(4);
                 //var plusOffset = absoluteDayDate.AddHours(28);
